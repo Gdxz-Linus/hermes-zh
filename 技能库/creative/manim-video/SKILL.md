@@ -121,7 +121,7 @@ manim -ql -i scene.py AlgorithmExplainer
 3. **交付呈现**：
    - 导出的 MP4 文件存放在 `media/videos/` 目录下，在回复中直接输出媒体呈现指令提供界面播放：
      ```
-     MEDIA:D:/Hermes/视频/AlgorithmExplainer.mp4
+     MEDIA:<工作目录>/视频/AlgorithmExplainer.mp4
      ```
 
 ---

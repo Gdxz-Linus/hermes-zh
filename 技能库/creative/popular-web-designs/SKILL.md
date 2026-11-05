@@ -99,10 +99,10 @@ metadata:
 
 ## 四、 交付与验证规约
 
-1. **单文件直接写入**：使用 `write_file` 将完整的 HTML 代码写入本地文件（如 `D:/Hermes/页面设计/linear-dashboard.html`）；
+1. **单文件直接写入**：使用 `write_file` 将完整的 HTML 代码写入本地文件（如 `<工作目录>/页面设计/linear-dashboard.html`）；
 2. **应用内即时预览**：在回复中使用应用内预览语法呈现，便于直接浏览与交互：
    ```
-   ::preview{file="D:/Hermes/页面设计/linear-dashboard.html"}
+   ::preview{file="<工作目录>/页面设计/linear-dashboard.html"}
    ```
 
 ---

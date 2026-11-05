@@ -178,7 +178,7 @@ model_reasoning_effort = "high"
 # 第二层：通道定义
 [model_providers.jk-deepseek]
 name = "JK DeepSeek (H200)"
-base_url = "http://10.118.70.129:30000/v1"
+base_url = "http://<服务器地址>:30000/v1"
 wire_api = "responses"
 env_key = "JK_DEEPSEEK_API_KEY"
 ```

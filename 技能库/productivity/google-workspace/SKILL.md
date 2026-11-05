@@ -100,10 +100,10 @@ metadata:
 - **文件上传与下载**：
   ```bash
   # 上传本地文件（自动推断 MIME 类型）
-  python scripts/google_api.py drive upload --path "D:/Hermes/架构图.svg" --name "最新架构图.svg"
+  python scripts/google_api.py drive upload --path "<工作目录>/架构图.svg" --name "最新架构图.svg"
 
   # 下载文件至本地
-  python scripts/google_api.py drive download --id <文件ID> --path "D:/Hermes/下载文件.pdf"
+  python scripts/google_api.py drive download --id <文件ID> --path "<工作目录>/下载文件.pdf"
   ```
 - **安全删除规约**：
   - 默认执行**移入回收站**操作（可恢复）：

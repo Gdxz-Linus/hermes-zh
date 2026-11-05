@@ -144,7 +144,7 @@ Hermes 配置解析器包含严格的键名白名单（`_KNOWN_PROVIDER_KEYS`）
 providers:
   jk-deepseek:
     name: JK-deepseek
-    api: http://10.118.70.129:30000/v1
+    api: http://<服务器地址>:30000/v1
     key_env: JK_DEEPSEEK_API_KEY
     api_mode: codex_responses
     transport: codex_responses

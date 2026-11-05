@@ -78,7 +78,7 @@ python scripts/render_ascii.py "input.mp4" -o "preview.gif" --format gif --fps 1
 3. **交付呈现**：
    - 生成的视频文件存放在指定目录后，使用标准格式直接输出交付标识：
      ```
-     MEDIA:D:/Hermes/视频/output_ascii.mp4
+     MEDIA:<工作目录>/视频/output_ascii.mp4
      ```
 
 ---

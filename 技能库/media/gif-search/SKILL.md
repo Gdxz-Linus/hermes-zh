@@ -70,7 +70,7 @@ for idx, item in enumerate(data.get("results", [])):
 ### 3. 下载动图保存至本地目录
 选定满意的动图后，直接下载至本地指定路径：
 ```bash
-curl -s -L "目标动图URL" -o "D:/Hermes/素材/celebrate.gif"
+curl -s -L "目标动图URL" -o "<工作目录>/素材/celebrate.gif"
 ```
 
 ---

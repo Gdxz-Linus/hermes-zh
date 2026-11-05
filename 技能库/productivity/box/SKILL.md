@@ -72,11 +72,11 @@ metadata:
 ### 3. 文件上传与下载流转
 - **上传本地文件至云端指定目录**：
   ```bash
-  box files:upload "D:/Hermes/报告.docx" --parent-folder <目标文件夹ID>
+  box files:upload "<工作目录>/报告.docx" --parent-folder <目标文件夹ID>
   ```
 - **下载云端文件至本地**：
   ```bash
-  box files:download <文件ID> --destination "D:/Hermes/下载/"
+  box files:download <文件ID> --destination "<工作目录>/下载/"
   ```
 
 ### 4. 共享链接与权限协作

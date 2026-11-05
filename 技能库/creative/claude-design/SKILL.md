@@ -72,10 +72,10 @@ metadata:
 
 ## 四、 交付与呈现规范
 
-1. **写盘落位**：使用 `write_file` 工具将代码写入用户指定目录或工作区的页面设计目录（如 `D:/Hermes/页面设计/prototype.html`）；
+1. **写盘落位**：使用 `write_file` 工具将代码写入用户指定目录或工作区的页面设计目录（如 `<工作目录>/页面设计/prototype.html`）；
 2. **会话内嵌入式预览**：在回复末尾通过应用内预览指令呈现：
    ```
-   ::preview{file="D:/Hermes/页面设计/prototype.html"}
+   ::preview{file="<工作目录>/页面设计/prototype.html"}
    ```
    用户可在聊天窗口中就地体验交互效果并审查界面排版。
 

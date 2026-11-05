@@ -78,7 +78,7 @@ xurl post create "系统新版本已正式上线，相关技术说明请参阅�
 
 ### 5. 上传媒体图片并附带发布
 ```bash
-xurl media upload "D:/Hermes/图片/preview.png"
+xurl media upload "<工作目录>/图片/preview.png"
 # 结合上传返回的 media_id 发布推文
 xurl post create "最新系统架构图发布" --media-id <返回的媒体ID>
 ```

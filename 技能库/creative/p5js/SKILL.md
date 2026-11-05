@@ -118,11 +118,11 @@ p5.js 围绕经典的生命周期设计：
 ## 三、 交付与本地呈现标准
 
 1. **直接写入自包含 HTML**：
-   - 使用 `write_file` 将包含脚本的完整代码保存至本地文件（如 `D:/Hermes/艺术设计/flow-field.html`）；
+   - 使用 `write_file` 将包含脚本的完整代码保存至本地文件（如 `<工作目录>/艺术设计/flow-field.html`）；
 2. **应用内实时预览**：
    - 在回复中输出标准预览标记，供用户直接在桌面端窗口中观看动画并进行鼠标交互：
      ```
-     ::preview{file="D:/Hermes/艺术设计/flow-field.html"}
+     ::preview{file="<工作目录>/艺术设计/flow-field.html"}
      ```
 
 ---
