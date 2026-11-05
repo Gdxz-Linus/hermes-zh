@@ -1,0 +1,10 @@
+name: zh-localization-overlay
+version: "1.0.0"
+description: "汉化覆盖层插件：在请求发出前把英文系统提示词与工具描述替换为中文。汉化文本存放在插件目录的映射表里，不改动 Hermes 仓库源码，程序升级不受影响。"
+author: 本地自建
+kind: standalone
+requires_hermes: ">=0.21.0"
+provides_tools: []
+provides_hooks: []
+provides_middleware:
+  - llm_request

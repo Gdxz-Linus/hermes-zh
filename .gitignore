@@ -1,0 +1,20 @@
+# Python 缓存
+__pycache__/
+*.py[cod]
+*$py.class
+
+# 部署生成物（运行时由 部署汉化.py 合并生成）
+插件/zh-localization-overlay/tools-zh.json
+插件/zh-localization-overlay/prompts-zh.json
+
+# 编辑器与系统文件
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 临时文件
+*.bak
+*.tmp
+_probe/

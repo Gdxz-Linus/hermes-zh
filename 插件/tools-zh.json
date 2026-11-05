@@ -1,0 +1,315 @@
+{
+  "diff_review": {
+    "en": "Review git changes for common code quality issues on added lines: debug prints, console calls, hardcoded secrets, bare or broad except clauses, and TODO/FIXME/HACK/XXX markers. By default reviews the working tree (staged, unstaged and untracked files) against HEAD. Before opening a PR, pass target='origin/main': this reviews the commits on base (default HEAD) since it branched from target, like a pull request view (git diff origin/main...HEAD). git runs in the agent's workspace; on container or SSH terminal backends, run `git diff` in the terminal and pass its output as diff_text. Returns JSON with status 'ok', 'no_diff' or 'error' (with message and error_type), per-file counts, warnings, untracked_files and notes.",
+    "description": "检查 Git 改动中新增行上的常见代码质量隐患：调试打印、控制台输出调用、硬编码敏感机密、一刀切或范围过宽的异常捕获，以及 TODO、FIXME、HACK、XXX 这类标记。默认审查当前工作区（已暂存、未暂存与未跟踪文件）相对于 HEAD 的改动。发起合并请求前，传入 target='origin/main'：此时审查的是基准 base（默认 HEAD）自分支于 target 之后产生的提交，等同合并请求视角（git diff origin/main...HEAD）。git 在智能体的工作目录中执行；使用容器或远程终端后端时，请在终端里自行运行 `git diff`，把输出作为 diff_text 传入。返回 JSON，status 取值 'ok'、'no_diff' 或 'error'（附带 message 与 error_type），并给出各文件计数、warnings、untracked_files 与 notes。",
+    "params": {
+      "base": "要审查的起始提交（默认 HEAD）。不传 target 时，工作区与它比较；传了 target 时，审查的是 base 上相对 target 多出的提交。可填分支名、标签或提交标识，不接受文件路径。",
+      "target": "你打算合入的目标分支，例如 'origin/main'。设置后审查的是 base 相对 target 新增的内容（git diff target...base）。本参数不用于比较任意两个引用：那种情形请把 `git diff A B` 的输出作为 diff_text 传入。",
+      "diff_text": "直接提供统一的 diff 文本进行分析，不再执行 git（此时 base 与 target 被忽略）。",
+      "cwd": "目标 Git 仓库所在的本地绝对工作目录（可选，默认当前目录）。"
+    },
+    "params_en": {
+      "base": "Commit to review from (default: HEAD). Without target, the working tree is compared against it. With target, the commits on base that are not on target are reviewed. Takes a branch, tag or commit SHA; file paths are not accepted.",
+      "target": "Branch you plan to merge into, e.g. 'origin/main'. When set, reviews what base adds relative to target (git diff target...base). Not for comparing two arbitrary refs: pass the output of `git diff A B` as diff_text for that.",
+      "diff_text": "Raw unified diff to analyze instead of running git (base and target are then ignored)."
+    }
+  },
+  "ha_list_entities": {
+    "en": "List Home Assistant entities. Optionally filter by domain (light, switch, climate, sensor, binary_sensor, cover, fan, etc.) or by area name (living room, kitchen, bedroom, etc.).",
+    "description": "列出 Home Assistant 中的实体。可按设备域（灯光 light、开关 switch、温控 climate、传感器 sensor、二元传感器 binary_sensor、窗帘 cover、风扇 fan 等）或按区域名称（客厅、厨房、卧室等）筛选。",
+    "params": {
+      "domain": "用于筛选的实体域（例如 'light'、'switch'、'climate'、'sensor'、'binary_sensor'、'cover'、'fan'、'media_player'）。省略则列出全部实体。",
+      "area": "用于筛选的区域或房间名称（例如 'living room'、'kitchen'）。匹配实体的友好名称。省略则列出全部。"
+    },
+    "params_en": {
+      "domain": "Entity domain to filter by (e.g. 'light', 'switch', 'climate', 'sensor', 'binary_sensor', 'cover', 'fan', 'media_player'). Omit to list all entities.",
+      "area": "Area/room name to filter by (e.g. 'living room', 'kitchen'). Matches against entity friendly names. Omit to list all."
+    }
+  },
+  "ha_get_state": {
+    "en": "Get the detailed state of a single Home Assistant entity, including all attributes (brightness, color, temperature setpoint, sensor readings, etc.).",
+    "description": "获取单个 Home Assistant 实体的详细状态，包含全部属性（亮度、颜色、温度设定值、传感器读数等）。",
+    "params": {
+      "entity_id": "需要查询的实体标识（例如 'light.living_room'、'climate.thermostat'、'sensor.temperature'）。"
+    },
+    "params_en": {
+      "entity_id": "The entity ID to query (e.g. 'light.living_room', 'climate.thermostat', 'sensor.temperature')."
+    }
+  },
+  "ha_list_services": {
+    "en": "List available Home Assistant services (actions) for device control. Shows what actions can be performed on each device type and what parameters they accept. Use this to discover how to control devices found via ha_list_entities.",
+    "description": "列出 Home Assistant 中可用的控制服务（动作）。展示各设备类型支持的操作与参数。控制设备前，可先用本工具查询 ha_list_entities 所发现设备支持的服务。",
+    "params": {
+      "domain": "按设备域筛选（例如 'light'、'climate'、'switch'）。省略则列出所有域的服务。"
+    },
+    "params_en": {
+      "domain": "Filter by domain (e.g. 'light', 'climate', 'switch'). Omit to list services for all domains."
+    }
+  },
+  "ha_call_service": {
+    "en": "Call a Home Assistant service to control a device. Use ha_list_services to discover available services and their parameters for each domain.",
+    "description": "调用 Home Assistant 服务控制设备。可先使用 ha_list_services 查询各设备域支持的服务与参数。",
+    "params": {
+      "domain": "服务所属域（例如 'light'、'switch'、'climate'、'cover'、'media_player'、'fan'、'scene'、'script'）。",
+      "service": "服务名称（例如 'turn_on'、'turn_off'、'toggle'、'set_temperature'、'set_hvac_mode'、'open_cover'、'close_cover'、'set_volume_level'）。",
+      "entity_id": "目标实体标识（例如 'light.living_room'）。部分服务（如 scene.turn_on）可能不需要此项。",
+      "data": "以 JSON 字符串形式传入的附加服务参数。示例：灯光用 {\"brightness\": 255, \"color_name\": \"blue\"}，温控用 {\"temperature\": 22, \"hvac_mode\": \"heat\"}，媒体播放器用 {\"volume_level\": 0.5}。"
+    },
+    "params_en": {
+      "domain": "Service domain (e.g. 'light', 'switch', 'climate', 'cover', 'media_player', 'fan', 'scene', 'script').",
+      "service": "Service name (e.g. 'turn_on', 'turn_off', 'toggle', 'set_temperature', 'set_hvac_mode', 'open_cover', 'close_cover', 'set_volume_level').",
+      "entity_id": "Target entity ID (e.g. 'light.living_room'). Some services (like scene.turn_on) may not need this.",
+      "data": "Additional service data as a JSON string. Examples: {\"brightness\": 255, \"color_name\": \"blue\"} for lights, {\"temperature\": 22, \"hvac_mode\": \"heat\"} for climate, {\"volume_level\": 0.5} for media players."
+    }
+  },
+  "openspec_context": {
+    "en": "Resolve a copyable OpenSpec identifier into working context. Paste an identifier like 'puzzletea' (a registered repo, by its vanity name) or 'puzzletea/os_a1b2c3' (a specific change or spec within it) and this returns the repo path plus the change proposal/tasks/design/specs content, or the spec content. The bare repo name lists active changes and current specs with their tokens. Use the returned 'path' as 'workdir' for the other openspec_* tools. Call this first whenever the user gives you an OpenSpec identifier.",
+    "description": "解析可复制的 OpenSpec 标识符并将其转化为工作区上下文。当用户提供形如“仓库简称”（如 'my-repo'）或“仓库/变更编号”（如 'my-repo/os_a1b2c3'）的标识符时，本工具会返回目标仓库的本地绝对路径，以及对应变更的需求提议、任务清单、设计方案与规格内容（若传入的是纯仓库名，则列出其所有活跃变更与当前规格清单）。返回结果中的 'path' 可直接作为后续其他 openspec_* 工具的 'workdir' 工作目录参数。每当用户输入 OpenSpec 标识符时，优先调用本工具建立上下文。",
+    "params": {
+      "identifier": "代码仓库简称（例如 'puzzletea'）或仓库及变更联合标识（例如 'puzzletea/os_a1b2c3'）。"
+    },
+    "params_en": {
+      "identifier": "A repo vanity name ('puzzletea') or name/change-token ('puzzletea/os_a1b2c3')."
+    }
+  },
+  "openspec_list": {
+    "en": "List OpenSpec changes or specs in a project. Use before choosing a change/spec to inspect, validate, or coordinate with kanban tasks.",
+    "description": "列出工程中已有的 OpenSpec 变更或规格清单。在挑选某个变更或规格进行查阅、校验，或与看板任务协同之前，先调用本工具建立全局视图。",
+    "params": {
+      "kind": "需要列出的条目类型（默认列出变更 changes）。",
+      "sort": "排序规则（默认按最近活跃 recent 排序）。"
+    },
+    "params_en": {
+      "kind": "Which OpenSpec items to list. Defaults to changes.",
+      "sort": "Sort order. Defaults to recent."
+    }
+  },
+  "openspec_show": {
+    "en": "Show an OpenSpec change or spec as JSON. Use to read proposals, tasks, designs, specs, deltas, and requirement/scenario content.",
+    "description": "以 JSON 格式展示指定的 OpenSpec 变更或规格全貌。用于读取需求提议、任务清单、设计方案、规格正文、增量差异以及需求条款与验收场景的具体内容。",
+    "params": {
+      "name": "需要展示详情的变更名称或规格说明书名称。",
+      "type": "当名称存在重复时用于区分条目类型（change 变更 或 spec 规格）。",
+      "deltas_only": "对于变更，仅返回需求条款的增量变动内容。",
+      "requirements_only": "输出 JSON 时省略验收场景，仅返回需求条款的正文说明。",
+      "no_scenarios": "输出 JSON 时排除验收场景的具体内容。",
+      "requirement": "可选的需求条款序号（从 1 开始计数，对应 openspec --requirement 参数）。"
+    },
+    "params_en": {
+      "name": "Change or spec name to show.",
+      "type": "Disambiguate item type when needed.",
+      "deltas_only": "For changes, return only requirement deltas.",
+      "requirements_only": "For JSON output, omit scenarios and return requirement text only.",
+      "no_scenarios": "For JSON output, exclude scenario content.",
+      "requirement": "Optional 1-based requirement id to show, matching openspec --requirement."
+    }
+  },
+  "openspec_validate": {
+    "en": "Validate OpenSpec artifacts. Use after editing specs/proposals/tasks or before completing kanban tasks tied to OpenSpec work.",
+    "description": "校验 OpenSpec 规范文件（规格、提议、任务清单）是否合规。在编辑相关文件后，或完成关联看板任务前调用本工具。",
+    "params": {
+      "target": "需要校验的具体变更或规格名称（使用 scope 参数时可省略）。",
+      "scope": "校验范围（若指定了 target 则校验目标，否则默认校验全部 all）。",
+      "type": "当校验目标重名时用于消除歧义的目标类型。",
+      "strict": "是否启用严格校验模式（默认为 true）。"
+    },
+    "params_en": {
+      "target": "Specific change/spec name to validate. Omit when using scope.",
+      "scope": "Validation scope. Defaults to target if target is supplied, otherwise all.",
+      "type": "Disambiguate target type when needed.",
+      "strict": "Enable strict validation. Defaults to true."
+    }
+  },
+  "openspec_status": {
+    "en": "Show artifact completion status for an OpenSpec change as JSON. Useful for turning proposal/task progress into kanban updates.",
+    "description": "以 JSON 格式查看指定 OpenSpec 变更中各规范文件的完成状态。用于将提议与任务的推进进度同步至看板。",
+    "params": {
+      "change": "OpenSpec 变更编号或变更名称。",
+      "schema": "可选的结构定义覆盖项。"
+    },
+    "params_en": {
+      "change": "OpenSpec change id/name.",
+      "schema": "Optional schema override."
+    }
+  },
+  "openspec_instructions": {
+    "en": "Return enriched OpenSpec instructions for creating an artifact or applying tasks. Use before implementing a spec-driven change.",
+    "description": "获取创建规范文件或执行任务所需的 OpenSpec 详细指引。在按规格实施变更前调用本工具。",
+    "params": {
+      "artifact": "规范文件或指引类型名称（支持 proposal 提议、design 设计、tasks 任务、specs 规格、apply 实施；'spec' 为 'specs' 的别名）。",
+      "change": "可选的变更编号或变更名称。",
+      "schema": "可选的结构定义覆盖项。"
+    },
+    "params_en": {
+      "artifact": "Artifact/instruction name, e.g. proposal, design, tasks, specs, apply. 'spec' is accepted as an alias for 'specs'.",
+      "change": "Optional change id/name.",
+      "schema": "Optional schema override."
+    }
+  },
+  "openspec_idea_create": {
+    "en": "Create a markdown idea under openspec/ideas from a title and prompt.",
+    "description": "根据标题和用户想法，在 openspec/ideas 目录下创建 Markdown 格式的构思文档，保存原始需求记录。",
+    "params": {
+      "title": "需求构思文档的标题。",
+      "prompt": "需要完整保留的原始想法正文内容。",
+      "origin": "需求构思的提出来源（human 人工提出、agent 智能体提出、mixed 混合提出）。",
+      "source": "origin 的参数别名。",
+      "slug": "可选的文件短名称（用于生成对应的文件名）。"
+    },
+    "params_en": {
+      "title": "Idea title.",
+      "prompt": "Raw human/agent idea text to preserve.",
+      "origin": "Idea origin, e.g. human, agent, or mixed.",
+      "source": "Alias for origin.",
+      "slug": "Optional preferred file slug."
+    }
+  },
+  "openspec_idea_enrich": {
+    "en": "Write or update a structured enrichment report for an existing OpenSpec idea.",
+    "description": "为 openspec/ideas 目录下已有的需求构思编写或更新结构化分析报告，明确核心问题、方案方向、风险评估与实施建议。",
+    "params": {
+      "idea": "需要细化的构思名称（即文件名，不用写 .md 后缀）。",
+      "slug": "idea 的参数别名。"
+    },
+    "params_en": {
+      "idea": "Idea slug/name under openspec/ideas without .md.",
+      "slug": "Alias for idea."
+    }
+  },
+  "openspec_idea_promote": {
+    "en": "Promote an existing OpenSpec idea into a new change scaffold with traceability.",
+    "description": "将已有的需求构思转为新的 OpenSpec 变更目录结构，继承构思中的分析与方案，并保留溯源关系。",
+    "params": {
+      "slug": "idea 的参数别名。",
+      "change": "需要创建的 OpenSpec 变更标识（采用短横线小写形式，如 my-new-feature）。",
+      "change_id": "change 的参数别名。"
+    },
+    "params_en": {
+      "slug": "Alias for idea.",
+      "change": "Kebab-case OpenSpec change id to create.",
+      "change_id": "Alias for change."
+    }
+  },
+  "openspec_task_list": {
+    "en": "List checklist tasks for an OpenSpec change with ids, text, status, and counts.",
+    "description": "列出指定 OpenSpec 变更的任务清单，返回任务编号、描述文本、完成状态与统计数字。"
+  },
+  "openspec_change_sequence_set": {
+    "en": "Declare dashboard-local review order and dependency/proof relationships for active OpenSpec changes. Use after creating multiple related changes so the dashboard and later agents know the intended sequence. Stores metadata in the Hermes OpenSpec plugin DB only; it does not modify OpenSpec files.",
+    "description": "声明活跃 OpenSpec 变更的审阅顺序与依赖关系。当连续创建了多个关联变更时使用本工具，供看板与后续智能体识别执行时序。此元数据仅保存在插件本地数据库中，不修改 OpenSpec 规格文件。",
+    "params": {
+      "changes": "按执行依赖顺序排列的变更名称列表（例如前置变更先行，验证变更在后）。",
+      "group_id": "可选的工序执行分组标签（默认为 'default'）。",
+      "dependencies": "可选的变更依赖关系映射表（例如：{目标变更: [前置变更1, 前置变更2]}）。",
+      "depends_on": "dependencies 的参数别名。"
+    },
+    "params_en": {
+      "changes": "Ordered change names or tokens, e.g. five prerequisite changes followed by the final proving change.",
+      "group_id": "Optional sequence group label. Defaults to 'default'.",
+      "dependencies": "Optional map of change name/token -> prerequisite/proving change names/tokens. Example: {final: [phase1, phase2]}.",
+      "depends_on": "Alias for dependencies."
+    }
+  },
+  "openspec_task_set_status": {
+    "en": "Set selected checklist task ids in an OpenSpec change to todo or done.",
+    "description": "更新指定 OpenSpec 变更中任务项的状态，设为待办（todo）或已完成（done）。"
+  },
+  "openspec_change_create": {
+    "en": "Create a draft OpenSpec change scaffold directly from title/summary and optional tasks/spec placeholder.",
+    "description": "根据标题、摘要以及可选的任务与规格说明，直接创建草稿状态的 OpenSpec 变更目录。用于在细化前建立基础变更结构。"
+  },
+  "openspec_change_promote": {
+    "en": "Promote a draft OpenSpec change to todo by ensuring tasks and a valid spec placeholder exist.",
+    "description": "将草稿状态的 OpenSpec 变更转为待办状态（todo）。确认该变更已具备任务清单与有效的规格说明文件。"
+  },
+  "openspec_change_archive": {
+    "en": "Archive a completed OpenSpec change, refusing incomplete tasks unless force is true.",
+    "description": "安全归档已完成的 OpenSpec 变更记录。若变更中仍有未完成的任务项，系统将拒绝归档（传入 force=true 可强制归档）。"
+  },
+  "openspec_change_unarchive": {
+    "en": "Move an archived OpenSpec change back to the active changes directory.",
+    "description": "将已归档的历史 OpenSpec 变更移回活跃变更目录，恢复其可编辑状态。"
+  },
+  "openspec_spec_diff": {
+    "en": "Compare a change's delta spec against its baseline, or a worktree spec against its HEAD version, and return a structured semantic delta at the requirement and scenario level plus a unified line diff fallback. Filesystem-backed — does not require the OpenSpec CLI binary. Pass 'change' to diff a change's delta spec against the baseline spec; omit 'change' to diff the current worktree spec against its HEAD version.",
+    "description": "对比变更增量规格与系统基线规格的语义差异，或对比工作区规格与 Git HEAD 版本的差异。在需求条款与验收场景层级输出结构化语义差异，并附带行级差异比较。直接操作文件系统，无需依赖 openspec 命令行。传入 change 对比增量规格与基线规格；省略 change 对比工作区与 HEAD 版本。",
+    "params": {
+      "spec": "规格说明名称（例如 'agent-tools'）或相对于 openspec/specs/ 的相对路径。",
+      "change": "变更标识——传入时对比增量规格与基线规格；省略时对比工作区与 HEAD 版本。"
+    },
+    "params_en": {
+      "spec": "Spec name (e.g. 'agent-tools') or relative path under openspec/specs/.",
+      "change": "Change id — when provided, diff the change's delta spec against the baseline. Omit for worktree-vs-HEAD comparison."
+    }
+  },
+  "openspec_spec_create": {
+    "en": "Create a spec from structured input (title, purpose, requirements with scenarios) and write a properly formatted spec.md. Filesystem-backed — does not require the OpenSpec CLI binary. Pass 'change' to write a change-scoped delta spec under openspec/changes/<change>/specs/; omit to write a baseline spec under openspec/specs/. Use 'force' to overwrite an existing spec. The requirements structure matches what openspec_spec_show returns, enabling round-trip edit workflows.",
+    "description": "根据标题、目的与需求场景等结构化输入，创建规范格式的规格说明文件（spec.md）。直接操作文件系统，无需依赖 openspec 命令行。传入 change 写入变更增量规格（openspec/changes/<change>/specs/）；省略 change 写入系统基线规格（openspec/specs/）。传入 force 可覆盖已有规格文件。",
+    "params": {
+      "spec": "规格说明名称（采用短横线小写，如 'agent-tools'，用作目录名）。",
+      "change": "变更标识——传入时写入对应变更下的增量规格目录；省略时写入系统基线规格目录。",
+      "title": "规格说明标题（写入文件一级大标题）。",
+      "purpose": "规格说明的目的陈述（写入文件的目的章节）。",
+      "requirements": "需求条款列表。每项包含名称、描述与验收场景列表（场景包含步骤类型与文本；步骤类型取值为 GIVEN、WHEN、THEN、AND、BUT）。",
+      "force": "若目标路径已存在同名规格是否直接强制覆盖（默认为 false）。"
+    },
+    "params_en": {
+      "spec": "Spec name (kebab-case, e.g. 'agent-tools'). Used as the directory name.",
+      "change": "Change id — when provided, writes under openspec/changes/<change>/specs/<spec>/. Omit for baseline openspec/specs/<spec>/.",
+      "title": "Spec title (used in the '# Title' header).",
+      "purpose": "Spec purpose statement (used in the '## Purpose' section).",
+      "requirements": "Array of requirements. Each: {name, description, scenarios: [{name, steps: [{type, text}]}]}. 'type' is GIVEN/WHEN/THEN/AND/BUT.",
+      "force": "Overwrite an existing spec at the target path. Defaults to false."
+    }
+  },
+  "openspec_spec_show": {
+    "en": "Read a spec as structured JSON (title, purpose, requirements with scenarios and steps). Filesystem-backed — does not require the OpenSpec CLI binary. Pass 'change' to read a change-scoped delta spec; omit to read a baseline spec.",
+    "description": "以 JSON 格式读取规格说明内容（包含标题、目的陈述、需求条款、验收场景与具体步骤）。直接操作文件系统，无需依赖 openspec 命令行。传入 change 读取变更中的增量规格；省略 change 读取系统基线规格。",
+    "params": {
+      "spec": "规格说明名称（例如 'agent-tools'）或相对文件路径。",
+      "change": "变更标识——传入时读取指定变更下的增量规格；省略时读取系统基线规格。"
+    },
+    "params_en": {
+      "spec": "Spec name (e.g. 'agent-tools') or relative path.",
+      "change": "Change id — when provided, reads from openspec/changes/<change>/specs/. Omit for baseline openspec/specs/."
+    }
+  },
+  "openspec_cli": {
+    "en": "Run the openspec CLI binary directly and return raw output. Use this for CLI commands that need the exact upstream JSON format (e.g. `openspec status --change <name> --json` returns applyRequires, artifacts, contextFiles, actionContext). The plugin's other tools (openspec_show, openspec_status, etc.) return different JSON shapes — use openspec_cli when you need the CLI's native output. Requires the openspec binary to be installed.",
+    "description": "直接运行 openspec 命令行程序并返回其原始输出。当需要上游 CLI 的原生 JSON 结构时使用本工具（例如 `openspec status --change <名称> --json` 会返回 applyRequires、artifacts、contextFiles 与 actionContext 等字段）。插件中的其他工具（openspec_show、openspec_status 等）返回的是另一套 JSON 结构——若需要 CLI 的原样输出，请改用本工具。前提是本机已安装 openspec 可执行程序。",
+    "params": {
+      "command": "OpenSpec 命令行参数（不含程序名本身）（例如 'status --change my-change'、'list --specs'、'instructions apply --change my-change'）。",
+      "workdir": "工作目录绝对路径（通常为代码仓库根目录，默认为当前目录）。",
+      "json_output": "设为 true（默认）时追加 --json 参数并返回解析后的结构化数据；设为 false 时返回原始文本输出。"
+    },
+    "params_en": {
+      "command": "Openspec CLI command and arguments without the binary name (e.g. 'status --change my-change', 'list --specs', 'instructions apply --change my-change').",
+      "workdir": "Working directory (repo root). Defaults to current directory.",
+      "json_output": "If true (default), appends --json to the command and returns parsed JSON. If false, returns raw text output."
+    }
+  },
+  "openspec_spec_list": {
+    "en": "List specs in a project. Filesystem-backed — does not require the OpenSpec CLI binary. Pass 'change' to list delta specs within a change; omit to list baseline specs.",
+    "description": "列出工程中的规格说明清单。直接操作文件系统，无需依赖 openspec 命令行。传入 change 列出指定变更包含的增量规格；省略 change 列出系统基线规格清单。",
+    "params": {
+      "change": "变更标识——传入时列出该变更包含的增量规格清单；省略时列出系统基线规格清单。"
+    },
+    "params_en": {
+      "change": "Change id — when provided, lists specs under openspec/changes/<change>/specs/. Omit for baseline openspec/specs/."
+    }
+  },
+  "plan_mode": {
+    "en": "Enter plan mode with action='on'. When the plan file is written and shown to the user, call action='submit' ALONE (not batched with other tool calls) to ask for approval. Approval or denial is the user's act. action='off' ends only an agent-entered plan mode. While on, writes are allowed only under the session's plans directory; other mutating tools are blocked. action='status' reports state. submit defaults to the newest tracked plan; path selects a plan and summary gives the approval prompt a title.",
+    "description": "用 action='on' 进入计划模式。计划文件写好并展示给用户后，单独调用 action='submit'（不要与其他工具调用合并在同一批）以请求批准。批准或拒绝由用户决定。action='off' 只能结束由智能体自己进入的计划模式。计划模式开启期间，仅允许向本会话的计划目录写入；其他修改类工具一律阻断。action='status' 报告当前状态。submit 默认取最新的受跟踪计划；path 用于指定某个计划，summary 为审批提示提供标题。",
+    "params": {
+      "reason": "计划的用途说明。",
+      "path": "本次计划模式下写入的计划文件的绝对路径或文件名；默认为最新的一个",
+      "summary": "审批提示中可选的单行标题"
+    },
+    "params_en": {
+      "reason": "What the plan is for.",
+      "path": "Absolute path or file name of a plan written in this plan mode; default: the newest one",
+      "summary": "Optional one-line title for the approval prompt"
+    }
+  }
+}

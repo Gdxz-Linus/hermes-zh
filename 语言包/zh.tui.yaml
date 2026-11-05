@@ -1,0 +1,19 @@
+# 用户层语言包覆盖文件
+#
+# 本文件由 extract_locale_diff.py 生成，来源 zh.tui.yaml
+# 只收录本地清洗过、与仓库官方版不同的键。
+# 未收录的键自动走仓库版；官方升级新增的键无需在此维护。
+#
+hubs:
+  agents:
+    section:
+      budget: 用量
+slashCmd:
+  ops:
+    browser:
+      modeBrowserUse: 浏览器：Browser Use 模式（通过 Browser Use CLI 3.0 使用 browser_exec）
+      newSessionsOnly: 适用于新会话——当前会话保留现有工具（使用 /new 开始新会话）
+      usage: 用法：/browser [connect|disconnect|status|use] [url] · 持久化：在 config.yaml 中设置 browser.cdp_url
+      useDisabled: 已禁用 Browser Use 模式——已恢复内置浏览器工具
+      useEnabled: 已启用 Browser Use 模式——通过 Browser Use CLI 3.0 使用 browser_exec
+      useUsage: 用法：/browser use [off]

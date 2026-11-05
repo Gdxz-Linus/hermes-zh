@@ -1,0 +1,15 @@
+# 统一按 LF 存档，检出时不按平台转换，避免 Windows 与 macOS／Linux 之间出现整文件差异
+* text=auto eol=lf
+
+# Python 与配置文件按文本处理
+*.py    text eol=lf
+*.json  text eol=lf
+*.yaml  text eol=lf
+*.yml   text eol=lf
+*.md    text eol=lf
+*.txt   text eol=lf
+
+# 二进制文件不做转换
+*.png   binary
+*.jpg   binary
+*.zip   binary

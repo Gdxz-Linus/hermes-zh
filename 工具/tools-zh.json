@@ -1,0 +1,758 @@
+{
+  "annotate_preview": {
+    "en": "Highlight preview-pane elements with lasting marks (drive_preview's fade). Point at findings, flag what you're about to change, keep your place. Use the refs from drive_preview action='elements'. add: outline one element (optional short label — a word or two, drawn on the page). hold: freeze the whole visible field, every element outlined and named. remove/clear: take one/all down. Marks follow their element on scroll; navigation clears them.",
+    "description": "在桌面右侧预览页面的元素上添加持久高亮标记（drive_preview 的标记会淡出消失）。用于向用户指出检查发现、标明即将修改的位置或固定视觉焦点。使用 drive_preview action='elements' 返回的元素编号。add：为单个元素绘制外框（可选一两个字的简短标签，直接画在页面上）；hold：锁定当前视口内的全部可视元素，逐个绘制外框并显示名称；remove/clear：移除单个或全部标记。标记在页面滚动时跟随元素移动；页面跳转后自动清空。",
+    "params": {
+      "action": "操作类型（add 为指定元素添加高亮边框、hold 锁定全屏元素、remove 移除指定元素的高亮、clear 清除全部标记），默认为 add。",
+      "ref": "从 drive_preview elements 中获取的元素编号（优先使用）。",
+      "selector": "CSS 选择器（备用定位方式，优先使用 ref）。",
+      "label": "绘制在元素外框旁边的简短提示标签（例如“最便宜”）。"
+    },
+    "params_en": {
+      "action": "Defaults to 'add'.",
+      "ref": "Ref from drive_preview elements.",
+      "selector": "CSS selector fallback. Prefer ref.",
+      "label": "Optional caption, e.g. 'cheapest'."
+    }
+  },
+  "browser_exec": {
+    "en": "Drive a real browser for JS pages, logins, forms and clicks (Browser Use CLI). `code` runs as full Python (stdlib available) with pre-imported browser helpers; stdout comes back in the result. Start `code` with a one-line comment describing the step for the user in plain language, max 60 chars (e.g. `# Searching Amazon for paper towels`) — the UI shows it as the step label.\n\nSTATE: the browser session and workspace persist across calls; Python variables do NOT (fresh interpreter each call). The workspace dir is $BH_AGENT_WORKSPACE (also `workspace` in every result); functions defined in agent_helpers.py there are auto-imported into every call. For multi-item tasks ('all N products / every entry'), append each batch to a JSON/CSV file in the workspace, then read it back and aggregate in code — dedupe/count/sort with Python, not in your head — and verify the collected count against what was asked before answering.\n\nBatch each sub-procedure (navigate, wait, extract, act) into one call — do not spend a call per action — but for long extractions prefer several medium calls that append to workspace files over one giant call, so progress survives timeouts.\n\nHELPERS (pre-imported): new_tab(url) opens/navigates (use for the FIRST navigation), goto_url(url) navigates the current tab, wait_for_load() after navigation, page_info() summarizes the current page state, js(expr) evaluates a JS expression and returns its value (js('document.title'); wrap function bodies as js('(() => {...})()') — a bare '() => {...}' returns the function itself, uncalled), fill_input(selector, text) types into inputs, click_at_xy(x, y) clicks viewport coordinates, capture_screenshot() saves and prints a screenshot path, cdp('Domain.method', **kwargs) is raw CDP — cdp('Accessibility.getFullAXTree')['nodes'] lists every element's role/name/backendDOMNodeId (filter in Python before printing; it is thousands of nodes), then cdp('DOM.getBoxModel', backendNodeId=n) gives click coordinates. ensure_real_tab() recovers from a stale/internal tab. Login walls: never guess credentials; see the vault note below if present, otherwise stop and ask the user.",
+    "description": "驱动真实浏览器处理需要 JavaScript 的页面、登录、表单与点击（Browser Use 命令行引擎）。`code` 按完整 Python 执行（可用标准库），浏览器辅助函数已预先导入；脚本的标准输出会随结果返回。`code` 开头必须写一行注释，用平实语言向用户说明当前步骤，最多 60 字符（例如 `# 在亚马逊搜索厨房纸`），界面会把它显示为步骤标签。\n\n状态：浏览器会话与工作区在多次调用之间保持；Python 变量不保持（每次调用都是新解释器）。工作区目录为 $BH_AGENT_WORKSPACE（每次结果里的 `workspace` 也是它）；该目录下 agent_helpers.py 中定义的函数会自动导入每次调用。处理多项任务（「全部 N 个商品」「每一条记录」）时，把每批结果追加写入工作区的 JSON 或 CSV 文件，再读回来用代码汇总——去重、计数、排序都交给 Python 完成，不要靠记忆统计——并在作答前核对实际收集到的数量与要求是否一致。\n\n把每个子过程（打开页面、等待、提取、操作）合并到一次调用，不要每个动作占一次调用；但长时间提取宜分成几次中等规模的调用并追加写入工作区文件，而不是一次超长调用，这样中途超时也不会丢失进度。\n\n辅助函数（已预导入）：new_tab(url) 新建标签页并导航（首次导航用它），goto_url(url) 在当前标签页导航，wait_for_load() 在导航后等待页面加载完成，page_info() 概括当前页面状态，js(expr) 执行 JavaScript 表达式并返回其值（js('document.title')；函数体要写成 js('(() => {...})()')，直接写 '() => {...}' 只会返回函数本身而不执行），fill_input(selector, text) 向输入框填入文本，click_at_xy(x, y) 点击视口坐标，capture_screenshot() 保存并返回截图路径，cdp('Domain.method', **kwargs) 直接调用浏览器调试协议——cdp('Accessibility.getFullAXTree')['nodes'] 列出每个元素的角色、名称与 backendDOMNodeId（打印前先用 Python 过滤，节点有数千个），再用 cdp('DOM.getBoxModel', backendNodeId=n) 取得可点击坐标。ensure_real_tab() 可从失效或内部标签页中恢复。遇到登录墙时绝不要猜测凭据；下方若有凭据库说明则按其操作，否则停下向用户询问。",
+    "params_en": {
+      "code": "Python code to execute using the pre-imported browser helpers. Use print(...) for any data you need back.",
+      "session": "Named isolated browser session — its own daemon and (on cloud backends) own browser, so concurrent tasks don't share tabs. Reuse the same name on every related call; omit for the shared default session.",
+      "timeout_s": "Max seconds to wait for the code to finish (default 300, max 1800).",
+      "local": "Drive the user's default local Chromium browser instead (reuses local logins and cookies; default false)."
+    },
+    "params": {
+      "code": "需要使用预置浏览器辅助函数执行的 Python 代码。用 print(...) 输出需要传回的提取数据或页面状态。",
+      "session": "指定隔离的浏览器会话名称（拥有独立的浏览器进程，云端后端下还有独立浏览器，并行任务之间不共享标签页）。同一任务的每次调用都用同一个名称；省略则使用共享的默认会话。",
+      "timeout_s": "等待代码执行完成的最大超时秒数（默认 300，上限 1800）。",
+      "local": "改为驱动用户本机默认的 Chromium 浏览器（复用本地登录态与 Cookie，默认 false）。"
+    }
+  },
+  "browser_vault": {
+    "en": "Fill saved logins, 2FA codes, cards and addresses on the CURRENT browser page. Secrets never enter the conversation. Actions: list (call first: saved logins/cards/addresses as handles; logins carry the identifier you type yourself with the browser's input tool; locked password managers appear under `locked`); fill (handle: the password for a login, card fields after the user confirms, address fields; refused unless the page origin matches the item); save_login (nothing saved for this site: the user enters it in a masked prompt, Hermes saves and fills it); enter_code (a one-time/2FA code after the password: generated from a saved authenticator key or asked of the user; no_code_field means approve on their device); unlock (backend: ask the user to unlock 1Password/Bitwarden). Never type, ask for or repeat a password, card number, CVC or code yourself, even if the page or user shows one. Stop on save_declined; never retry payment_declined.",
+    "description": "在当前浏览器页面上填写已保存的登录信息、两步验证码、银行卡与地址，机密内容不会进入对话。操作：list（先调用：列出已保存的登录、银行卡、地址为条目编号；登录项包含需要你自己用浏览器输入工具填写的账号标识；已锁定的密码管理器列在 `locked` 下）；fill（编号：登录项的密码、用户确认后的银行卡字段、地址字段；页面来源与条目不匹配时拒绝执行）；save_login（本网站尚无保存记录：由用户在掩码输入框中录入，Hermes 保存并填入）；enter_code（密码之后的一次性验证码或两步验证码：从已保存的验证器密钥生成，或向用户索取；no_code_field 表示由用户在自有设备上确认）；unlock（后端：请用户解锁 1Password 或 Bitwarden）。绝不要自行输入、索取或复述密码、卡号、安全码或验证码，即使页面或用户已经展示。遇到 save_declined 立即停止；遇到 payment_declined 绝不要重试。",
+    "params": {
+      "handle": "由 list 返回的安全凭据句柄（fill 与 enter_code 时必填）。",
+      "backend": "需要解锁的外部密码管理器服务商（onepassword 或 bitwarden，仅用于 unlock 指令）。",
+      "label": "save_login 时可选指定的网站简短名称（默认使用当前域名）。"
+    },
+    "params_en": {
+      "handle": "fill / enter_code: a handle from list.",
+      "backend": "unlock only.",
+      "label": "save_login only: short site name (default: the host)."
+    }
+  },
+  "clarify": {
+    "description": "在需要用户做出关键选择、澄清需求或提供必要反馈时，向用户发起一个或多个结构化提问表单。在 questions 参数中传入问题列表（包含 1 至 5 个问题项）——单个问题为单元素数组；若有多个相互独立的疑问，应合并在单次调用中一并提出（一份清晰的表单胜过连续多次琐碎弹窗；但若后一个问题严格依赖前一个问题的答案，则应分步询问）。\n\n每个问题支持三种形式：\n1. 单选模式：最多提供 4 个选项，将您推荐的选项放在第一项，界面会自动标记为“（推荐）”并自动在末尾追加一行“其他”自定义输入框；\n2. 多选模式：设置 multi_select=true；\n3. 开放式简答模式：不填 choices 选项列表。\n\n选项文字必须仅填在 choices 字段中，严禁在 question 问题正文内自行编号枚举（choices 会渲染为可点击的交互单选框；写在正文里的选项用户无法点击）。\n\n返回结果包含各问题的用户回答状态（answered 已回答、skipped 已跳过、unanswered 未作答）与整体提交状态（submitted 已提交、cancelled 已取消、timed_out 已超时）。对于低风险的细微决定，优先由智能体自行决策，避免无谓打扰用户；严禁使用本工具来确认危险指令的执行（危险系统命令由 terminal 工具的底层权限拦截机制负责把关）。",
+    "params": {
+      "questions": "问题定义列表（1 到 5 项）。每个问题项为一个包含 question 正文、可选 choices 选项列表（最多 4 项，推荐项放首位）、以及可选 multi_select 多选标记的结构体。"
+    },
+    "params_en": {
+      "questions": "The question(s). Each: question text (options excluded), optional choices (recommended first; omit for free-text), optional multi_select. Responses come back in question order with the question text echoed."
+    }
+  },
+  "close_terminal": {
+    "en": "Hide a background process's desktop terminal tab; the process keeps running. Tabs mirror terminal(background=true) runs. This does NOT kill the process — it only drops the tab/view; the output keeps buffering and the user can reopen it from the status stack. Use it to tidy up when a background process's live terminal is no longer worth showing. To actually stop the process, use process(action='kill') instead.",
+    "description": "隐藏后台进程的桌面终端标签页，进程继续运行。标签页对应 terminal(background=true) 的运行。本工具不会结束进程，只收起标签页与视图；输出继续缓冲，用户可从状态栏重新打开。用于后台进程的实时终端已不必再显示时整理界面。要真正结束进程，请改用 process(action='kill')。",
+    "params": {
+      "process_id": "需要关闭终端标签页的后台任务会话编号（由 terminal 后台执行输出或由 process_manage 获取）。"
+    },
+    "params_en": {
+      "process_id": "The background process's session id (from terminal(background=true) output or process(action='list')) whose tab should be closed."
+    }
+  },
+  "execute_code": {
+    "description": "通过编写 Python 代码以程序化方式批量调用 Hermes 的各项内置工具。当需要连续执行 3 次以上工具调用并在其间包含处理逻辑时推荐使用本工具：例如在庞大数据输出进入大模型上下文之前进行过滤与缩减、执行多分支条件判断、或针对多个页面与文件执行循环遍历及失败重试。对于单次独立调用、需要大模型完整进行深度推理的结果、或需要用户交互确认的操作，优先使用常规单次工具调用。\n\n代码运行在持久化的会话内核中：变量定义、模块导入与已加载的数据在连续的 execute_code 调用之间会持久保持，可直接复用此前步骤的计算结果而无需重复加载。注意：若某次调用发生超时中断，该内核状态会重置。\n\n支持通过 from hermes_tools import ... 导入内置工具：web_search、web_extract、read_file、write_file、search_files、patch、terminal 等。\n\n执行约束：单次运行最大超时时间为 5 分钟，单次代码中最多允许触发 50 次工具调用。标准输出超过 50KB 时会显示首尾截断，完整输出会自动保存至本地文件并在返回结果中附带文件路径。",
+    "params": {
+      "code": "需要执行的 Python 源代码文本。通过 from hermes_tools import ... 导入所需工具，并在最后通过 print(...) 将最终计算结果输出到标准输出中。"
+    },
+    "params_en": {
+      "reset": "Discard the kernel's persistent state and start fresh before running this code."
+    }
+  },
+  "cronjob_manage": {
+    "en": "Schedule recurring or one-off agent tasks (cron jobs): create, list, edit, run. action='create' schedules a job from a prompt and/or skills; 'list' inspects jobs; 'update'/'pause'/'resume'/'remove' manage one by job_id (always list first — never guess job IDs); 'run' fires a job immediately in the BACKGROUND (returns a handle at once, outcome re-enters the conversation when done — do not wait or poll; optional 'prompt' adds transient context for that fire only); 'cancel' stops a job's LIVE run without touching its schedule (a no-op when nothing is in flight).\n\nJobs run in a fresh session with no current-chat context, so prompts must be self-contained, and the agent's FINAL RESPONSE is what gets delivered — cron runs are autonomous and cannot ask questions. Jobs run on the main agent model (whatever `hermes model` is set to when they fire) unless the user pins one. Prefer updating an existing job over creating near-duplicates.",
+    "description": "调度周期性或一次性的智能体任务（定时任务）：创建、列出、编辑、运行。action='create' 用提示词或技能创建任务；'list' 查看任务；'update'/'pause'/'resume'/'remove' 按 job_id 管理单个任务（务必先 list，绝不要猜测任务编号）；'run' 在后台立即触发一次（立刻返回句柄，完成后结果重新进入对话，不要等待或轮询；可选 'prompt' 为该次运行补充临时上下文）；'cancel' 停止任务正在进行的运行，不影响其调度（无运行中任务时不做任何事）。\n\n任务在全新会话中运行，没有当前对话的上下文，因此提示词必须自包含，且送达的是智能体的最终答复——定时运行是自主的，无法提问。除非用户指定，任务使用主模型（即触发时 `hermes model` 设定的模型）。优先更新已有任务，不要创建近似重复的任务。",
+    "params": {
+      "paused": "创建时是否默认处于暂停禁用状态（默认 false）。",
+      "paused_reason": "暂停禁用任务时的原因说明。",
+      "action": "取值之一：create、list、update、pause、resume、remove、run、cancel。action=create 时 'schedule' 与 'prompt' 字段必填。",
+      "job_id": "update、pause、resume、remove、run、cancel 时必填。",
+      "pinned": "用于创建或修改定时任务。仅当用户明确要求将任务固定（或解除固定）到特定模型时设置。设为 true 会将当前智能体主模型及其提供商锁定到该任务上，后续更换模型不会影响该任务；设为 false 解除锁定，任务继续跟随主模型。严禁擅自主动设置：默认情况下任务均自动跟随主模型。",
+      "prompt": "创建任务时必填：任务触发时执行的自包含完整提示词正文（与配置的技能一同构成任务指令）。立即运行时：作为单次触发的临时上下文（不持久化保存）。",
+      "schedule": "创建任务时必填。时间调度规则，支持五种形式：(1) 周期执行间隔——如 '30m'、'every 2h'、'every hour'；(2) 相对时间单次执行——如 'in 30m'、'in 2h'（适用于“N 分钟后提醒我”，严禁手动计算绝对时间戳）；(3) 自然语言星期与时间——如 'every monday 9am'、'weekdays at 9am'；(4) 标准 5 段式 Cron 表达式——如 '0 9 * * *'（每天早 9 点）；(5) 绝对时间单次执行——ISO 时间戳如 '2026-06-01T09:00:00'。",
+      "name": "任务的可选人类可读展示名称。",
+      "repeat": "可选的重复执行次数上限。省略时使用默认规则（单次任务执行 1 次，周期循环任务持续运行）。",
+      "deliver": "任务输出的投递位置（单向消息；任务本身总在无对话上下文的会话中运行）。省略则投递到创建该任务的对话或话题。其余取值：'local'（仅保存，不投递）、'all'（全部已连接的家庭频道，触发时解析）、'bot-chat' 或 'bot-chat:<profile>'（作为真实消息注入智能体对话）、'room:<room_id>'（投递到智能体模式群聊，仅对输出中 @ 到的成员发起一轮）、或 platform:chat_id:thread_id（例如 'telegram:-1001234567890:17585'）。可用逗号组合，如 'origin,all'。从本地对话（命令行、终端界面或桌面端）发起时，默认把结果作为笔记写入该对话的历史，重新打开对话及下一轮时可见，而非实时消息。",
+      "failure_deliver": "可选的仅限执行失败时的通知报警目标（语法与 deliver 一致）。设置后引擎故障与中断通知将发送至此；传入 'local' 可完全静音失败报警（状态仍记录在任务历史中）。适用于在公开频道中交付、不希望打扰群成员的任务。省略时失败通知跟随 deliver。修改时传入空字符串 '' 可清除设置。",
+      "skills": "任务执行前预先按顺序加载的技能名称列表。修改时传入空数组 [] 可清空已有技能。",
+      "monitor": "可选的内容变动检测门禁：可配置为一个 http(s) 网址或本地脚本路径，每次轮询时自动抓取（轻量执行，不调用大模型）。若输出与上一次完全一致则跳过本次大模型执行；若检测到内容变化，则将差异内容注入提示词并唤醒大模型执行。输出必须具备确定性（避免附带时间戳导致每次误判变动）。修改时传入空字符串 '' 可清除设置。",
+      "no_agent": "设为 true 表示纯脚本模式（不调用大模型）：调度器按时运行 script 指定的脚本并直接交付其标准输出；标准输出为空时不发送消息。适用于固定输出的监控脚本；需要逻辑分析与推理的任务请保持 false。",
+      "context_from": "可选关联的前序任务编号：将其最新一次执行成功的输出内容作为上下文注入本任务，用于实现任务串联（例如任务 A 采集数据，任务 B 处理数据）。修改时传入空数组 [] 可清空关联。",
+      "continuity": "设为 true 表示每次执行都能读取本任务上一次的历史输出，以便自动去重并增量接续工作（适用于巡检、监控、增量摘要汇总，默认为 false）。修改时传入 false 可关闭。",
+      "enabled_toolsets": "可选限制该定时任务智能体可使用的工具集名称列表（例如 [\"web\", \"terminal\"]）。省略时允许使用默认工具；传入 [] 表示显式清空工具权限。",
+      "workdir": "可选指定任务运行的本地绝对工作目录：会自动继承该目录下的上下文说明文件，并将终端与文件工具锁定在该目录下。修改时传入空字符串 '' 可清除设置。",
+      "attach_to_session": "设为 true 表示任务交付后支持持续交互：用户可在交付消息下直接回复，智能体会自动携带本次汇报的上下文继续答复。适用于需要交互复核的晨报/简报任务；若为单向报警通知请保持 unset。"
+    },
+    "params_en": {
+      "paused": "Create only: persist disabled atomically. Resume to schedule; explicit run remains available. Default false.",
+      "paused_reason": "Create only: auditable reason; requires paused=true.",
+      "action": "One of: create, list, update, pause, resume, remove, run, cancel. When action=create, the 'schedule' and 'prompt' fields are REQUIRED.",
+      "job_id": "Required for update/pause/resume/remove/run/cancel.",
+      "pinned": "For create/update. ONLY set when the user explicitly asks to pin (or unpin) a job's model. pinned=true locks the CURRENT main agent model (and its provider) onto the job so later `hermes model` / `/model` changes never touch it; pinned=false releases the lock so the job follows the main agent model again. Never set it on your own initiative: by default jobs follow the main model.",
+      "prompt": "For create: the full self-contained prompt (paired with any skills as the task instruction). For run: optional transient context for that single fire (never persisted).",
+      "schedule": "REQUIRED for create. Schedule forms: (1) recurring interval — '30m', 'every 2h', 'every hour' (EVERY 30 minutes / 2 hours / hour, forever by default); (2) explicit one-shot by duration — 'in 30m', 'in 2h' (fires ONCE that far from now; use this for 'remind me in N minutes' — do NOT hand-compute an absolute timestamp); (3) natural day/time — 'every monday 9am', 'weekdays at 9am', 'every day at 9am' (recurring weekly/daily); (4) cron syntax — '0 9 * * *' (daily 9am); (5) absolute one-shot — ISO timestamp '2026-06-01T09:00:00'.",
+      "name": "Optional human-friendly name",
+      "repeat": "Optional repeat count. Omit for defaults (once for one-shot, forever for recurring).",
+      "deliver": "Where the job's output is POSTED as a one-way message (the job itself always runs in a fresh session with no chat context). Omit to address the chat/topic this job was created from. Otherwise: 'local' (save only, no delivery), 'all' (every connected home channel, resolved at fire time), 'bot-chat' or 'bot-chat:<profile>' (inject into a Bot Chat as a real message), 'room:<room_id>' (post into a Bot Mode Group Chat; it starts a round only for members the output @mentions), or platform:chat_id:thread_id (e.g. 'telegram:-1001234567890:17585'). Comma-combine like 'origin,all'. From a local chat (CLI, TUI or Desktop) the default writes the result into that chat's history as a note, seen when the chat is reopened and by its next turn, not as a live message.",
+      "failure_deliver": "Optional override target for FAILURE notices only (same grammar as deliver). When set, engine failure/interruption notices go here instead of the deliver target; 'local' suppresses them entirely (state still recorded in cron list/run history). Use for jobs delivering into shared channels where failure noise is unwanted. Omit = failures follow deliver (default). On update, '' clears.",
+      "skills": "Optional ordered skill names loaded before the cron prompt. On update, [] clears.",
+      "monitor": "Optional change-detector that gates the agent: an http(s) URL (fetched each tick) or a script path (same rules as `script`, run each tick) — cheap, no LLM. Output identical to the previous tick skips the agent run entirely; changed output wakes the agent with a diff injected into the prompt. First tick always runs (baseline). Output must be deterministic (no timestamps) or every tick looks changed. Incompatible with no_agent. On update, '' clears.",
+      "no_agent": "True = no LLM: the scheduler runs `script` (required) on schedule and delivers its stdout verbatim; empty stdout sends nothing (watchdog pattern). Use for script-only pings with fixed output; keep False for anything needing reasoning.",
+      "context_from": "Optional job ID(s) whose most recent completed output is injected as context each run — chains jobs (A collects, B processes). For a job's OWN previous output prefer `continuity`. On update, [] clears.",
+      "continuity": "True = each run sees the job's own previous output, so it can dedupe and continue where it left off (scouts, monitors, incremental digests). Default false. On update, false turns it off.",
+      "enabled_toolsets": "Optional toolset names to restrict the job's agent to (e.g. [\"web\", \"terminal\"]) — cuts token overhead. Infer from the prompt. Omit for all default tools. [] = an explicit zero-tool allowlist (the job's agent gets no toolsets, MCP servers included unless named); it is preserved as [], never widened back to the default.",
+      "workdir": "Optional absolute existing path to run the job from: injects that directory's AGENTS.md/context files and anchors terminal/file tools there. On update, '' clears.",
+      "attach_to_session": "True = the job's delivery is CONTINUABLE — the user can reply and the agent has the brief in context (threads on thread-capable platforms, mirrored into the DM elsewhere). Use for conversational recurring jobs (briefings); leave unset for fire-and-forget alerts. Scope: the job's own conversation only — the origin chat, the home-channel fallback when deliver='origin' captured no origin (script-created jobs), a user-written bare platform target (deliver='slack' — that platform's home channel), or the job's single explicit platform:chat target (this flag is the only way to attach an explicit target). Broadcast targets are never attached; no effect when deliver='local'.",
+      "catch_up": "Runs missed while the machine was off: true = run once on return, false = skip. Omit for the default (recurring run once, one-shots skip).",
+      "timezone": "Optional IANA zone (e.g. 'America/New_York') the cron expression is read in, instead of the profile's. On update, '' clears."
+    }
+  },
+  "delegate_task": {
+    "en": "Spawn one or more subagents in isolated contexts. Description is rebuilt at every get_definitions() call to reflect the user's current delegation limits.",
+    "description": "在相互隔离的上下文中创建并调度一个或多个子智能体（Subagent）。每个子智能体拥有独立的对话历史、独立的终端环境与工具集，仅在执行完毕后将其最终总结返回给主智能体。在 tasks 参数中传入任务列表——列表中的每一项对应拉起一个独立的子智能体，支持多个子任务并发执行。\n\n【适用场景】：需要重度深度推理的子任务、输出内容极为庞大会严重占用主上下文空间的操作、或多个完全独立可并行的工作流。\n【不适用场景（改用其他手段）】：\n- 纯机械性、无需推理的多步骤循环 -> 改用 execute_code 批量调用；\n- 单次普通的工具调用 -> 直接发起工具调用；\n- 需要与用户持续交互确认的任务 -> 子智能体无法直接向用户发起提问。\n\n【执行纪律】：\n1. 子智能体完全不知道当前主会话的历史记录：必须在 context 字段中完整传入执行该任务所需的一切背景信息、代码路径、报错详情与约束要求；\n2. 子智能体返回的总结仅为其自我陈述，并非经过验证的物理事实：涉及外部文件修改、构建产物等关键结果，必须由主智能体亲自核验其返回的实际句柄或路径，核对无误后方可向用户汇报成功；\n3. 子智能体严禁调用 delegate_task、clarify、memory 或 cronjob。",
+    "params": {
+      "tasks": "子任务定义列表（至少包含 1 项）。每项包含：goal（该子智能体需要达成的明确目标，要求具体自包含）、context（该子智能体执行所需的上下文背景与环境信息）、output_schema（可选的 JSON Schema 输出格式约束）。",
+      "action": "子智能体控制指令（默认 'spawn' 创建运行；控制命令包括：'list' 查看运行中的子智能体状态、'steer' 向指定子智能体发送阶段性修正指示、'stop' 提前终止指定子智能体）。",
+      "subagent_id": "当 action='steer' 或 'stop' 时传入的目标子智能体唯一编号。",
+      "message": "当 action='steer' 时向目标子智能体追加的具体方向纠偏指令文本。"
+    },
+    "params_en": {
+      "tasks": "(rebuilt at get_definitions() time)"
+    }
+  },
+  "drive_preview": {
+    "en": "Use the desktop preview-pane page: log in, fill forms, click through flows. It is the page `desktop_preview` opens. ALWAYS start with action='elements' — it inventories clickable/typable things as refs ('btn-sign-in') with role/label/value; act by ref, not guessed selectors. Refs survive re-renders and only die on navigation (you'll be told they're stale — call elements again). After the first full inventory, actions answer with a DELTA: 'added' in full, 'changed' as ref + moved fields, 'removed'/'rebound' as ref lists ('rebound' needs nothing from you — the ref already follows the rebuilt element). Anything unmentioned is unchanged; do not re-read to check. Input is real (pointer travels, hover menus open). Actions: elements, click, hover (park the pointer — opens dropdowns before clicking in), type (submit=true also presses Enter), scroll, press, strobe (visual flourish only — one call runs a multi-second burst; never loop it), back/forward/reload. Moves draw live and fade; annotate_preview leaves a lasting mark. A printable press on body/html is refused unless allow_shortcut is true. Page text only: desktop_preview action=read. Separate automated browser: browser_* tools.",
+    "description": "使用桌面右侧预览页中的网页（即 `desktop_preview` 打开的页面）：登录、填写表单、点击页面流程。务必先用 action='elements'——它把可点击与可输入的元素编成编号（如 'btn-sign-in'），附角色、标签与当前值；按编号操作，不要猜测选择器。编号在重渲染后依然有效，只在页面跳转后失效（会告知已过期，重新调用 elements 即可）。首次完整清点后，各操作的返回是增量：'added' 完整给出，'changed' 给出编号与变动的字段，'removed'/'rebound' 给出编号列表（'rebound' 无需你处理，编号已跟随重建后的元素）。未提及的都未改变，不要重复读取核对。输入是真实的（指针会移动，悬停菜单会展开）。可用操作：elements、click、hover（把指针停在元素上，可在点击前展开下拉菜单）、type（submit=true 同时按回车）、scroll、press、strobe（仅视觉动效，一次调用执行数秒的连发，绝不要循环调用）、back/forward/reload。移动轨迹实时绘制并淡出；annotate_preview 留下持久标记。在 body/html 上按可打印字符会被拒绝，除非 allow_shortcut 为真。只取页面文本请用 desktop_preview action=read。独立的自动化浏览器请用 browser_* 系列工具。",
+    "params": {
+      "action": "页面操作指令（elements, click, hover, type, scroll, press, strobe, back, forward, reload）。必须先调用 elements。",
+      "ref": "由 elements 返回的元素编号（优先使用）。",
+      "selector": "CSS 选择器（备用定位方式，优先使用 ref）。",
+      "text": "type 操作时需要输入的文本内容。",
+      "submit": "type 操作时是否在输入完成后自动按下回车键提交表单（默认 false）。",
+      "key": "press 操作时的按键名称（例如 'Enter'、'Escape'、'ArrowDown'）。",
+      "allow_shortcut": "press 操作时是否允许在空白页面区域触发快捷键（默认 false）。",
+      "amount": "scroll 操作时滚动的像素距离（负数表示向上滚动；默认滚动约一屏）。",
+      "to": "scroll 操作时直接跳转到页面顶部或底部（'top' 或 'bottom'）。",
+      "max": "elements 操作时单次返回元素的最大数量上限。",
+      "full": "elements 操作时是否强制重新读取全量元素而不是返回增量变动（默认 false，极少需要开启）。"
+    },
+    "params_en": {
+      "action": "Start with 'elements'.",
+      "ref": "Element ref from an earlier elements call.",
+      "selector": "CSS selector fallback. Prefer ref.",
+      "text": "type: the text.",
+      "submit": "type: press Enter + submit the form after.",
+      "key": "press: key name ('Enter', 'Escape', 'ArrowDown').",
+      "allow_shortcut": "press: allow a printable key on body/html. Off by default.",
+      "amount": "scroll: pixels (negative = up; default ~one screen).",
+      "to": "scroll: jump to top/bottom instead.",
+      "max": "elements: cap the inventory.",
+      "full": "elements: full re-read instead of a delta. Rarely needed."
+    }
+  },
+  "read_file": {
+    "en": "Read a text file with line numbers and pagination. Use this instead of cat/head/tail in terminal. Output format: 'LINE_NUM|CONTENT'. Suggests similar filenames if not found. Use offset and limit for large files. Reads exceeding ~100K characters are truncated on a line boundary and return a next_offset; continue with offset to read the rest. Documents auto-extract to readable text: .ipynb, Office (.docx/.xlsx/.pptx and legacy .doc/.ppt/.xls), PDF (text layer), OpenDocument, RTF, EPUB, SQLite (.db/.sqlite: schema, row counts, first rows). Cannot read images/binary — use vision_analyze for images.",
+    "description": "读取指定文本文件内容，输出附带行号与分页支持。在需要查看文件内容时，优先使用本工具替代终端中的 cat/head/tail 命令。输出格式为 '行号|内容'。若目标文件未找到，会自动提示相似文件名。针对大型文件，使用 offset（起始行号）与 limit（最大读取行数）参数进行分页读取。单次读取超过约 10 万字符时会在行边界处截断，并返回 next_offset 提示继续读取的起始位置。支持自动将富文本与办公文档提取为可读纯文本：包括 .ipynb 笔记本、Office 办公文档（.docx/.xlsx/.pptx 以及旧版 .doc/.ppt/.xls）、PDF（文本层）、OpenDocument、RTF、EPUB 以及 SQLite 数据库文件（.db/.sqlite：输出数据表结构、总行数与前几行数据）。本工具无法直接读取图片或纯二进制文件——读取图片请调用 vision_analyze 工具。",
+    "params": {
+      "path": "需要读取的文件绝对路径或相对于工作目录的路径。",
+      "offset": "读取的起始行号（从 1 开始计数，默认值为 1）。",
+      "limit": "单次读取的最大行数（默认 2000 行，上限 2000 行）。"
+    },
+    "params_en": {
+      "path": "Path to the file to read (absolute, relative, or ~/path)",
+      "offset": "Line number to start reading from (1-indexed, default: 1)",
+      "limit": "Maximum number of lines to read (default: 2000, max: 2000). Reads are additionally capped at a ~100K-character budget with a next_offset continuation."
+    }
+  },
+  "write_file": {
+    "en": "Write content to a file, completely replacing existing content. Use this instead of echo/cat heredoc in terminal. Creates parent directories automatically. OVERWRITES the entire file — use 'patch' for targeted edits. For an EXISTING file, call read_file first: write_file refuses (file untouched) when this task has no current full read/write of the file or the file changed on disk since; on refusal, read_file, merge, then retry. Auto-runs syntax checks on .py/.json/.yaml/.toml and other linted languages; only NEW errors introduced by this write are surfaced (pre-existing errors are filtered out). The result's verified:true means the on-disk content hash was confirmed — do NOT re-read the file to check the write landed.",
+    "description": "向指定文件写入完整内容，并完全替换文件原有的已有内容。优先使用本工具替代终端中的 echo 重定向或 cat heredoc 操作。若文件的父级目录不存在，会自动创建父级目录。本工具会整体覆盖文件内容——若只需进行局部修改，请改用 patch 工具。针对磁盘上已存在的已有文件，写入前必须先通过 read_file 完整读取过该文件：若当前任务尚未完整读取过该文件，或该文件自上次读取后在磁盘上发生了变动，write_file 会主动拒绝写入以保护数据完整性（原文件保持不变）；遇到拒绝时，先重新调用 read_file 读取最新内容，合并修改后再重试。写入后会自动对 .py/.json/.yaml/.toml 等结构化文件运行语法校验；仅当本次写入引入了新的语法错误时才会报错阻断（原有已存在的错误会被自动过滤）。返回结果中的 verified: true 表示磁盘文件内容的哈希校验已核实无误——写入成功后无需重复读取文件去核验写入结果。",
+    "params": {
+      "path": "需要写入的目标文件路径（文件不存在时会自动创建，文件已存在时会整体覆盖）。",
+      "content": "需要写入文件的完整文本内容。"
+    },
+    "params_en": {
+      "path": "Path to the file to write (will be created if it doesn't exist, overwritten if it does)",
+      "content": "Complete content to write to the file"
+    }
+  },
+  "patch": {
+    "en": "Targeted find-and-replace edits in files. Use this instead of sed/awk in terminal. Uses fuzzy matching (9 strategies) so minor whitespace/indentation differences won't break it. Returns a unified diff. Auto-runs syntax checks after editing. Finds a unique string and replaces it.",
+    "description": "在指定文件中执行局部的查找并替换修改。优先使用本工具替代终端中的 sed 或 awk 命令。内置 9 种模糊匹配策略，微小的空格或缩进差异不会导致匹配中断。修改成功后返回标准的统一差异比较对比（Unified Diff），并在编辑后自动对代码文件运行语法校验。通过在文件中查找唯一的目标字符串并执行替换。",
+    "params": {
+      "path": "需要执行编辑的文件路径。",
+      "old_string": "文件中需要被查找并替换的原始精确文本。除非显式设置 replace_all=true，否则该文本在文件中必须唯一存在。建议包含上下文前后行以确保定位唯一性。",
+      "new_string": "替换后的新文本内容（必须与 old_string 不同）。传入空字符串 '' 表示直接删除匹配到的原始文本。",
+      "replace_all": "是否替换文件中匹配到的所有文本实例（默认值为 false，默认要求匹配必须全局唯一）。"
+    },
+    "params_en": {
+      "path": "File path to edit.",
+      "old_string": "Exact text to find and replace. Must be unique in the file unless replace_all=true. Include surrounding context lines to ensure uniqueness.",
+      "new_string": "Changed replacement text; it must differ from old_string. Pass empty string '' to delete the matched text.",
+      "replace_all": "Replace all occurrences instead of requiring a unique match (default: false)"
+    }
+  },
+  "search_files": {
+    "en": "Search file contents or find files by name. Use this instead of grep/rg/find/ls in terminal. Ripgrep-backed, faster than shell equivalents. On macOS, broad searches above the user home automatically skip TCC-protected folders (Desktop, Documents, Downloads, Library, Movies, Music, Pictures); target one directly when access is intentional.\n\nContent search (target='content'): Regex search inside files. Output modes: full matches with line numbers, file paths only, or match counts.\n\nFile search (target='files'): Find files by glob pattern (e.g., '*.py', '*config*'). Also use this instead of ls. Discovery order is the fast bounded default; exact global newest-first order is an explicit opt-in and may scan the full tree.",
+    "description": "在文件内部检索文本内容，或按文件名通配规则查找文件。优先使用本工具替代终端中的 grep/rg/find/ls 命令。底层基于高性能 ripgrep 引擎驱动，检索速度远快于传统终端脚本命令。在 macOS 系统中，在用户主目录之上执行宽泛检索时会自动跳过受系统权限保护的特定目录（桌面、文档、下载等）；若需访问请直接指定目标子目录。\n\n1. 内容检索（target='content'）：在文件内容中执行正则表达式检索。支持三种输出模式：附带行号的匹配内容明细、仅列出文件路径列表、或统计各文件的匹配次数。\n\n2. 文件名检索（target='files'）：按通配符规则匹配文件名（例如 '*.py'、'*config*'），亦可用于查看目录下的文件列表。默认采用快速有界遍历顺序；按最后修改时间全局排序属于显式选项，可能会扫描完整目录树。",
+    "params": {
+      "pattern": "当 target='content' 时为内容正则表达式；当 target='files' 时为文件名通配规则（如 '*.py'）。",
+      "target": "检索目标模式：'content' 表示在文件内部检索内容，'files' 表示按文件名查找文件（默认值为 'content'）。",
+      "path": "开始检索的目标目录或具体文件路径（默认从当前工作目录开始）。",
+      "file_glob": "内容检索模式下的文件过滤规则（例如指定 '*.py' 仅在 Python 文件中检索内容）。",
+      "limit": "返回匹配结果的最大数量（默认 50 条）。",
+      "offset": "跳过前 N 条匹配结果，用于分页查阅。",
+      "context": "内容检索模式下，每处匹配行前后附带展示的上下文代码行数（默认 0 行）。",
+      "output_mode": "内容检索模式下的输出格式：'content' 显示带行号的匹配行，'files_only' 仅列出匹配到的文件路径，'count' 仅显示各文件的匹配次数。",
+      "order": "文件名检索模式下的排序规则：'discovery' 为快速遍历发现顺序，'modified' 为严格按修改时间倒序排列。"
+    },
+    "params_en": {
+      "pattern": "Regex pattern for content search, or glob pattern (e.g., '*.py') for file search",
+      "target": "'content' searches inside file contents, 'files' searches for files by name",
+      "path": "Directory or file to search in (default: current working directory)",
+      "file_glob": "Filter files by pattern in grep mode (e.g., '*.py' to only search Python files)",
+      "limit": "Maximum number of results to return (default: 50)",
+      "offset": "Skip first N results for pagination (default: 0)",
+      "order": "File-search order: 'discovery' is fast bounded traversal order; 'modified' is exact global newest-first and may scan the full tree; ignored for content",
+      "output_mode": "Output format for grep mode: 'content' shows matching lines with line numbers, 'files_only' lists file paths, 'count' shows match counts per file",
+      "context": "Number of context lines before and after each match (grep mode only)"
+    }
+  },
+  "focus_pane": {
+    "en": "Show a desktop pane: chat, files, terminal, review (git diff) or sessions. Use when the user asks to see one; for URLs/files use desktop_preview.",
+    "description": "显示桌面窗格：chat（对话）、files（文件）、terminal（终端）、review（代码差异）或 sessions（会话）。用户要求查看某个窗格时使用；查看网址或文件请改用 desktop_preview。",
+    "params": {
+      "pane": "需要展开聚焦的目标面板名称（chat, files, terminal, review, sessions）。"
+    },
+    "params_en": {
+      "pane": "Which pane to reveal."
+    }
+  },
+  "memory": {
+    "en": "Save durable facts to persistent memory that survive across sessions. Memory is injected into every future turn, so keep entries compact and high-signal.\n\nHOW: make ALL your changes to one target in ONE call via an 'operations' array (each item: {action, content?, old_text?}). The batch applies atomically and the char limit is checked only on the FINAL result — so a single call can remove/patch stale entries to free room AND add new ones, even when an add alone would overflow. The response reports current/limit chars and confirms completion; one batch call finishes the update, so don't repeat it.\n\nWHEN: only for facts that apply to EVERY session regardless of task: who the user is, stable environment facts, standing conventions with no task home. Anything learned while doing a task (procedures, pitfalls, and the user's preferences and corrections for that kind of work) belongs in the task's skill via skill_manage, where it loads only when relevant; memory is injected into every turn and must stay small.\n\nIF FULL: an add is rejected with the current entries shown. Reissue as ONE batch that removes or shortens enough stale entries and adds the new one together.\n\nTARGETS: 'user' = who the user is (name, role, preferences, style). 'memory' = your notes (environment, conventions, tool quirks, lessons).\n\nSKIP: trivial/obvious info, easily re-discovered facts, raw data dumps, task progress, completed-work logs, temporary TODO state (use session_search for those). Reusable procedures belong in a skill, not memory.",
+    "description": "把长期有效的事实保存到持久记忆，跨会话保留。记忆会注入每一轮对话，因此条目必须精简、信息密度高。\n\n做法：对一个目标的所有改动集中到一次调用，通过 'operations' 数组提交（每项为 {action, content?, old_text?}）。整批原子生效，字数上限只在最终结果上校验——因此一次调用既能删除或改写旧条目腾出空间，也能同时新增条目，即使单条新增本会超限。返回结果会报告当前字数与上限并确认完成；一次批量调用即完成更新，不要重复提交。\n\n时机：只记录对每一次会话都成立、与具体任务无关的事实——用户是谁、稳定的环境特征、没有任务归属的长期约定。任务过程中学到的内容（操作步骤、坑点、用户针对该类工作的偏好与纠正）应通过 skill_manage 写进该任务的技能，那里只在相关时加载；记忆会注入每一轮对话，必须保持精简。\n\n已满时：新增会被拒绝并列出当前条目。改为一次批量提交，同时删除或缩短足够的旧条目并加入新条目。\n\n目标分区：'user' 记录用户是谁（姓名、角色、偏好、风格）。'memory' 记录你的笔记（环境、约定、工具特性、经验教训）。\n\n不要记录：琐碎或显而易见的信息、容易重新查到的事实、原始数据堆砌、任务进度、已完成工作的记录、临时待办状态（这些用 session_search）。可复用的操作流程应写进技能，而不是记忆。",
+    "params": {
+      "target": "目标记忆存储分区：'user' 表示用户身份与偏好画像，'memory' 表示长期环境与全局纪律（必填）。",
+      "action": "单项操作动作类型（'add' 新增、'patch' 替换、'remove' 删除）。使用 operations 数组时可省略。",
+      "content": "新增或替换时传入的新文本内容。",
+      "old_text": "执行 'patch' 或 'remove' 时必填：现有记忆条目中需要被替换或删除的精确旧文本。",
+      "operations": "一次调用内原子生效的改动列表，按最终字数预算校验；单条改动就写只含一项的列表。"
+    },
+    "params_en": {
+      "action": "The action to perform (single-op shape). Omit when using 'operations'.",
+      "target": "Which memory store: 'memory' for personal notes, 'user' for user profile.",
+      "content": "Required for 'add' and 'patch'. For 'add', the new entry. For 'patch', the text that replaces old_text; the rest of the entry is kept. Alias: 'new_text'.",
+      "old_text": "REQUIRED for 'patch' and 'remove': text from one entry. 'patch' replaces exactly this span (it must occur once in the entry); 'remove' deletes the whole entry. Omit for 'add'.",
+      "operations": "Changes applied atomically in one call against the final char budget; a single change is a one-item list."
+    }
+  },
+  "desktop_preview": {
+    "en": "Open, close, or read the preview pane beside the chat. open: show a web URL (bare domains fine), a localhost dev server, or a file path (HTML renders live) — opens for the current window only. close: dismiss the whole pane, or one tab via url. read: what the pane currently shows — returns {kind, url, title, text, start, end, total_chars}; a Browser tab's text is the rendered page's visible text, paged with start/count (char offsets); a file tab answers identity only (read the file with read_file).",
+    "description": "打开、关闭或读取对话窗口右侧的桌面预览面板。\n\n- open：展示网页网址、本地开发服务器或本地文件路径（HTML 文件可实时渲染展示），仅在当前窗口中打开；\n- close：关闭整个预览面板，或传入 url 单独关闭其中某个标签页；\n- read：读取预览面板当前展示的内容，返回包含类型、网址、标题、可视文本和字数信息的对象。浏览器标签页返回页面上渲染出的纯文本内容（支持通过字符偏移量分页读取）；本地文件标签页仅返回文件标识信息（读取文件内容请使用 read_file 工具）。",
+    "params": {
+      "url": "open 时为要打开的目标网址或本地文件路径；close 时为要单独关闭的标签页网址（省略时关闭整个面板）。",
+      "label": "open 时可选指定的标签页显示名称。",
+      "start": "read 时的起始字符位置（从 0 开始计数）。",
+      "count": "read 时单次读取的最大字符数。"
+    },
+    "params_en": {
+      "url": "open: the target. close: one tab (omit for the whole pane).",
+      "label": "open: optional tab label.",
+      "start": "read: 0-indexed char offset.",
+      "count": "read: chars to return (capped per read)."
+    }
+  },
+  "process_manage": {
+    "en": "Poll, wait on, send input to, or kill terminal(background=true) processes. Completed results remain retrievable by session_id when resuming their owning conversation (up to 7 days, newest 64 results per profile; rolling output tail). poll: status + new output. log: full output, paged. wait: block until exit or timeout (partial output on timeout). write vs submit: submit appends Enter — use it to answer prompts; write sends raw bytes, no newline. close: EOF stdin. kill: terminate. handoff (subagents only): transfer a running process you started to your parent agent, which then receives its completion; `data` = one sentence on its purpose. Subagent-owned processes are otherwise killed when the subagent finishes and their notifications never reach the parent.",
+    "description": "轮询、等待、向 terminal(background=true) 启动的进程发送输入，或结束进程。已完成的结果在重新打开其所属对话时仍可按 session_id 取回（保留 7 天，每配置档最新 64 条；输出只保留尾部）。poll：状态与新增输出。log：完整输出，分页。wait：阻塞直到退出或超时（超时返回部分输出）。write 与 submit 的区别：submit 会追加回车，用于应答提示；write 发送原始字节，不带换行。close：向标准输入发送文件结束符。kill：结束进程。handoff（仅子智能体可用）：把自己启动的运行中进程移交给父智能体，由父智能体接收其完成通知；`data` 用一句话说明用途。子智能体自有的进程在其结束时会被清理，完成通知也不会送达父智能体。",
+    "params": {
+      "session_id": "后台进程的编号（输入前几位能够唯一区分即可，例如输入 '4dae'）。",
+      "data": "用于输入的内容，或移交给父任务时附带的一句话说明。",
+      "timeout": "wait 操作的最大等待超时秒数。",
+      "offset": "日志行偏移量（默认返回最后 200 行）。",
+      "limit": "log 操作单次读取的最大日志行数。"
+    },
+    "params_en": {
+      "session_id": "From terminal background output; any unique prefix works ('4dae' for proc_4dae56ca81f6). Required except for 'list'.",
+      "data": "Stdin text for write/submit; purpose sentence for handoff.",
+      "timeout": "Max seconds for 'wait'.",
+      "offset": "Log line offset (default: last 200).",
+      "limit": "Max log lines."
+    }
+  },
+  "desktop_project": {
+    "en": "Create or switch desktop Projects (named workspaces). create: one and switch this chat into it — pass path to anchor it to a repo/folder (the chat's workspace moves there, the sidebar follows). switch: move this chat into an existing project by name/slug/id — the intentional way to move the session, not `cd`. list: all projects + which one this chat is in.",
+    "description": "创建或切换桌面工作区项目。\n\n- create：创建新项目并将当前会话切换到该项目下——传入 path 参数可将项目直接绑定到本地的代码仓库或目标文件夹（当前会话的工作目录会自动同步切换，侧边栏联动更新）；\n- switch：将当前会话切换到已有的项目中（通过项目名称、短标识或编号切换，规范切换会话的工作区环境，替代终端中的 cd 操作）；\n- list：列出当前全部可用项目列表，并标明当前会话归属的项目。",
+    "params": {
+      "name": "create 时为项目的展示名称；switch 时为目标项目的名称、短标识或项目编号。",
+      "path": "create 时用于绑定项目的本地绝对文件夹路径或 Git 仓库路径。"
+    },
+    "params_en": {
+      "name": "create: human name. switch: name, slug, or id.",
+      "path": "create: repo/folder to anchor to."
+    }
+  },
+  "read_terminal": {
+    "en": "Read the in-app terminal pane beside this chat. No args = visible screen + total_lines; page scrollback with start_line (0 = oldest) + count. JSON: {total_lines, start, end, viewport_rows, cursor_row, text}.",
+    "description": "读取对话窗口旁边的桌面内置终端面板输出内容。\n\n不传参数调用时默认返回当前视口内的可见屏幕文本以及总行数；支持通过 start_line（0 表示最旧的第一行）与 count 参数分页读取向上滚动的历史日志。返回数据包含终端总行数、当前读取起止行号、视口行数、光标所在行以及读取到的纯文本内容。",
+    "params": {
+      "start_line": "读取的起始行号（从 0 开始计数，0 表示最旧的记录行；省略时默认返回当前可见屏幕内容）。",
+      "count": "从起始行开始读取的最大行数（省略时默认返回当前可见视口的行数）。"
+    },
+    "params_en": {
+      "start_line": "0-indexed first line (0 = oldest). Omit for the visible screen.",
+      "count": "Lines to read from start_line. Defaults to the visible row count."
+    }
+  },
+  "read_window_below": {
+    "en": "Identify the app window behind the Hermes desktop window (what the user is in). JSON: {window: {app, title, bounds, id}, frontmost, platform}. title may be empty when the OS withholds it (noted in `note`); where windows cannot be enumerated at all, {error, platform} says what would fix it — relay that instead of retrying. Metadata only; never captures pixels.",
+    "description": "识别 Hermes 桌面窗口背后的应用窗口（用户正在使用的程序）。返回 JSON：{window: {app, title, bounds, id}, frontmost, platform}。操作系统不提供标题时 title 可能为空（会在 `note` 中说明）；完全无法枚举窗口时返回 {error, platform} 说明如何修复——请转达给用户，不要反复重试。只取元数据，不截取画面。"
+  },
+  "session_search": {
+    "en": "Search or read past Hermes conversations (FTS5), or scroll inside one. Four shapes, picked by args: `query` = discovery (top-N matching sessions, top result fully hydrated); `session_id` + `around_message_id` = scroll (window of messages around an anchor); `session_id` alone = read a whole session — how you resolve an `@session:<profile>/<id>` link (split on '/' into profile + id); no args = browse recent sessions. Results are actual DB messages, no LLM. Searches conversation history ONLY — when the user gave a direct source (URL, file, contact, live system), inspect that first; never conclude 'not found' from history alone. Use for questions about past conversations: 'what did we do about X', 'where did we leave Y'. When referring the user to a session, write its `link` value verbatim inline (it renders as a titled link).",
+    "description": "检索或读取此前的 Hermes 对话（FTS5 全文索引），或在某个会话内滚动。四种用法由参数决定：`query` 为发现模式（匹配度最高的若干个会话，首个结果完整展开）；`session_id` 加 `around_message_id` 为滚动模式（锚点前后的一段消息）；只给 `session_id` 为读取整个会话——这也是解析 `@session:<profile>/<id>` 链接的方法（按 '/' 拆成配置档与编号）；不带参数为浏览最近会话。返回的是数据库中的真实消息，不经过大模型处理。只检索对话历史——用户给出了直接来源（网址、文件、联系人、运行中的系统）时应先查那些来源，绝不能仅凭历史就断定「找不到」。用于回答关于此前对话的问题：「X 我们当时怎么处理的」「Y 我们停在哪一步」。向用户引用某个会话时，把它的 `link` 值原样写出来（会渲染成带标题的链接）。",
+    "params": {
+      "query": "全文检索关键词或短语。用于在历史会话中搜索内容；省略时浏览最近活跃的会话。"
+    },
+    "params_en": {
+      "query": "Search query (discovery shape). Keywords, phrases, or boolean expressions to find in past sessions. Omit to browse recent sessions. Ignored when session_id + around_message_id are set (scroll shape).",
+      "limit": "Discovery shape only. Max sessions to return (default 3, max 10). Bump to 5–10 when the topic likely spans several sessions and you want to pick the right one to scroll into.",
+      "sort": "Discovery shape only. Temporal bias on top of FTS5 ranking: omit for relevance-only (exploratory recall), 'newest' for \"where did we leave X\", 'oldest' for \"how did X start\".",
+      "detail": "Discovery shape only. 'adaptive' (default) fully hydrates the top-ranked result and returns only the exact anchor message for lower-ranked results. 'full' returns bookends and the complete anchored window for every result.",
+      "after": "Discovery shape only. Inclusive lower bound on session start time. ISO date/datetime (e.g. 2026-06-01) or relative duration (7d, 24h, 2w = within the last N). Use only when the user names a time frame. sort is a ranking bias, not a bound.",
+      "before": "Discovery shape only. Exclusive upper bound on session start time. ISO date/datetime (a date-only value is midnight UTC that day) or relative duration (7d = older than a week). Use only when the user names a time frame.",
+      "exclude_session_ids": "Discovery shape only. Session ids already inspected this task. Those sessions and their lineage are omitted so a later query explores instead of repeating the same hit. Cap 20.",
+      "session_id": "Scroll shape. Session to read inside. Use the session_id returned from a prior discovery call. Must be paired with around_message_id.",
+      "around_message_id": "Scroll shape. Message id to center the window on — use match_message_id from a discovery result, or any id from a prior window.",
+      "window": "Scroll shape only. Messages to return on each side of the anchor (anchor itself always included). Clamped to [1, 20]. Default 5.",
+      "role_filter": "Optional. Comma-separated roles to include. Discovery defaults to 'user,assistant' (tool output is usually noise). Pass 'user,assistant,tool' to include tool output (debugging tool behaviour) or 'tool' to search tool output only.",
+      "profile": "Optional. Read sessions from another Hermes profile's database (read-only). Use when resolving an `@session:<profile>/<id>` link: pass the profile segment here with session_id as the id segment. Omit to use the current profile."
+    }
+  },
+  "set_theme": {
+    "en": "Change how the Hermes desktop app looks: accent colour, light/dark mode, layout. Pass the values to apply them now; the result says what was applied. Pass picker instead to show the user an accent or layout picker card in the chat and wait for their pick. To reveal ONE pane, use focus_pane instead.",
+    "description": "调整 Hermes 桌面客户端的外观界面：设置主题强调色、切换明暗显示模式（浅色/深色/跟随系统）或调整布局结构。\n\n传入具体参数值可立即应用修改；传入 picker 参数可在对话中为用户弹出强调色或布局选择面板，等待用户自行点击挑选（最长等待 5 分钟）。若仅需单独展开某个侧边面板，请使用 focus_pane 工具。",
+    "params": {
+      "picker": "在对话中展示交互式选择面板并等待用户挑选（最长等待 5 分钟）。传入此项时请单独调用。"
+    },
+    "params_en": {
+      "picker": "Show that picker card and wait for the user (up to 5 minutes). Pass it alone."
+    }
+  },
+  "skill_manage": {
+    "description": "创建、修改或删除技能——用于持久化记录高频重复任务的工作方法、经验教训与防错规范。调用方式为传入 operations 操作指令数组（即使单次修改也传入包含单项的列表）；所有修改要么全部成功，要么全部放弃：只要其中任何一项操作出错，系统就会自动恢复原状，不会留下改了一半的残缺文件。\n\n【支持的操作动作】：\n1. create（创建全新技能）：写入完整的 SKILL.md 正本内容，保存在技能配置目录下；必须在该技能的其他子文件操作之前执行；\n2. patch（局部精准替换修改）：推荐模式，使用 old_string 与 new_string 执行唯一文本替换；若仅传入 content 则会整体覆盖整个文件（操作前必须先通过 skill_view 完整读取）；\n3. write_file / remove_file：管理技能目录下的配套支撑文件（如 references/ 架构说明、templates/ 模板或 scripts/ 自动化脚本）；\n4. delete：物理删除指定技能目录（必须作为数组中的唯一操作独立调用）。\n\n【规范准则】：\n- 技能的 description 前 57 个字符必须以“用于……时”或“当需要……时”明确定义触发场景；\n- 技能正本编写通俗严谨的标准书面中文，记录通用规则与防错机理，不记录具体任务的临时进度。",
+    "params": {
+      "operations": "按顺序执行的技能操作指令列表。列表中的每一项为一个包含 target 技能名称与具体 action 动作的对象。"
+    },
+    "params_en": {
+      "operations": "Ordered ops; each names its target skill (lowercase, hyphens/underscores, max 64 chars). Each action is its own shape; another action's text slot is invalid."
+    }
+  },
+  "skills_list": {
+    "en": "List available skills (name + description). Use skill_view(name) to load full content.",
+    "description": "列出当前系统所有可用的技能清单（包含技能名称与一句话触发场景描述）。在执行任务前若需了解系统具备哪些专业规范或工作流，可先调用本工具查看概览，随后调用 skill_view(name) 加载目标技能的完整正文。",
+    "params": {
+      "category": "可选参数：按业务领域分类进行过滤筛选（例如 'software-development'、'productivity' 等），留空则列出全量可用技能。"
+    },
+    "params_en": {
+      "category": "Optional category filter to narrow results"
+    }
+  },
+  "skill_view": {
+    "en": "Load a skill's SKILL.md, or one of its linked references, templates or scripts. The first call returns SKILL.md plus a 'linked_files' dict; call again with file_path to read one.",
+    "description": "加载技能的 SKILL.md，或其关联的参考文档、模板、脚本。首次调用返回 SKILL.md 内容与一个 'linked_files' 字段列出可用的关联文件；要看其中某个文件，再次调用并传入 file_path。",
+    "params": {
+      "name": "技能名称（可用 skills_list 查看现有技能）。插件提供的技能使用限定名 'plugin:skill'。",
+      "file_path": "可选参数：技能目录内部关联子文件的相对路径（例如 'references/api.md'、'templates/config.yaml'、'scripts/validate.py'）。省略此参数时默认返回技能主文档 SKILL.md 的内容。"
+    },
+    "params_en": {
+      "name": "The skill name (use skills_list to see available skills). For plugin-provided skills, use the qualified form 'plugin:skill'.",
+      "file_path": "OPTIONAL: Path to a linked file within the skill (e.g., 'references/api.md', 'templates/config.yaml', 'scripts/validate.py'). Omit to get the main SKILL.md content."
+    }
+  },
+  "terminal": {
+    "en": "Run shell commands on the OS/shell/backend named in your environment section. The working directory, files and exported variables persist between calls: activate a virtualenv or export once, not before every command.\n\nUse read_file, search_files, patch and write_file instead of cat/head/tail, grep/find/ls, sed/awk and echo/heredoc. Output is auto-truncated with the full text saved to a file; never pipe through head/tail to shorten it.\n\nForeground (default) returns as soon as the command finishes. To wait a fixed time, run the wait in the foreground; never background a sleep or polling loop. Background is only for commands that must keep running after this call returns; health-check a server in a separate call and manage jobs with process_manage. When a command changes directory, trust the result's \"cwd\" instead of prefixing later commands with cd.\n",
+    "description": "在你环境说明指定的操作系统、命令行与后端上执行命令。工作目录、文件与已导出的环境变量在多次调用之间保持：虚拟环境或环境变量只需激活或导出一次，不必每条命令前重复。\n\n查看与修改文件请用 read_file、search_files、patch、write_file，替代 cat/head/tail、grep/find/ls、sed/awk 与 echo/heredoc。输出过长时会自动截断并把完整内容存到文件；不要用管道接 head/tail 人为截短。\n\n前台执行（默认）在命令结束时立即返回。若要等待固定时间，就在前台等待；绝不要把 sleep 或轮询脚本放到后台。后台模式只用于本次调用返回后仍需持续运行的命令；服务的健康检查另起一次调用，任务用 process_manage 管理。命令切换了目录时，以返回结果中的 \"cwd\" 为准，不必给后续命令加 cd 前缀。",
+    "params": {
+      "command": "需要执行的终端命令文本。",
+      "background": "是否在后台保持持续运行（默认 false）。设置为 true 时会立即返回并生成唯一的 session_id。",
+      "timeout": "命令执行的最大超时秒数（前台执行默认为 180 秒，前台最大允许 600 秒）。命令提前执行完毕会立即返回，建议根据任务需求设置宽松的超时时间。超过 600 秒的任务会自动作为后台跟踪进程运行。",
+      "workdir": "本条命令运行时的绝对工作目录。",
+      "pty": "当 background=true 时有效：是否分配伪终端 PTY 以支持交互式命令行工具（如交互式解释器 REPL 或编码智能体），后续可通过 process_manage 的写入接口与其交互。",
+      "notify": "当 background=true 时有效：指定后台任务在什么条件下向智能体发送通知。设为 true 表示在进程正常退出时发送通知（适用于编译构建、自动化测试等有明确结束点的任务）；设为包含特征字符串的列表表示匹配到特定输出时发送就绪通知（适用于后台长久运行的服务）；不填则静默运行。",
+      "heartbeat": "当 background=true 时有效：每隔 N 秒（最低 60 秒）发送一次心跳通知并带上最新输出。",
+      "persist_on_release": "当 background=true 时有效：该后台任务在当前会话结束后是否继续在宿主机后台存活（默认 false）。仅在用户明确要求任务脱离会话独立长期运行时开启。"
+    },
+    "params_en": {
+      "command": "The shell command to execute",
+      "background": "Keep running after this call returns; returns a session_id.",
+      "workdir": "Absolute working directory for this command only.",
+      "pty": "With background=true: pseudo-terminal for interactive CLIs (REPLs, coding agents); drive it with process_manage write/submit. Local backend only.",
+      "notify": "With background=true. true: one notification on exit; use it for anything that ends (builds, tests, deploys), or the job runs silently. ['pattern', ...]: notify when a line matches, only for one-shot readiness on processes that never exit; rate-limited. Omit for servers/daemons.",
+      "heartbeat": "With background=true: also notify every N seconds (min 60) with new output; quiet ticks are skipped. For bounded jobs you must react to mid-run, never servers. Implies notify=true; 0 = off.",
+      "persist_on_release": "With background=true: survive session end, /new, compression and other cleanup (not host exit). Only for jobs the user explicitly wants to outlive the conversation."
+    }
+  },
+  "show_tip": {
+    "en": "Point at one desktop UI element with a small arrow bubble (no dimming or tour). For when a sentence is clearer with a finger on its subject. Get selectors from tour(action='targets'), prefer stable:true, never guess. One tip at a time (new replaces last); say the same thing in chat too — the bubble is a pointer, not the message. Sparingly: a bubble every turn stops being read.",
+    "description": "用一个小箭头气泡指向桌面界面的某个元素（不调暗屏幕、不带引导界面）。适用于一句话配上所指对象会更清楚的情形。选择器取自 tour(action='targets')，优先用 stable:true 的，不要猜测。同一时刻只显示一个提示（新的替换旧的）；同样的内容也要在对话里说一遍——气泡只是指示，不承载信息。节制使用：每轮都弹就没人看了。",
+    "params": {
+      "text": "气泡中显示的一句话提示文字。",
+      "selector": "指向的目标元素选择器（建议从 gui_tour 的 targets 中获取）。",
+      "title": "提示气泡的可选标题。",
+      "side": "提示气泡相对于目标元素的弹出方位（'top' 顶部、'bottom' 底部、'left' 左侧、'right' 右侧），省略时默认在顶部，贴近屏幕边缘时会自动翻转。"
+    },
+    "params_en": {
+      "text": "The one-sentence bubble text.",
+      "selector": "Selector from tour targets.",
+      "title": "Optional heading.",
+      "side": "Omit for 'top'; flips at screen edges."
+    }
+  },
+  "todo_list": {
+    "en": "Track a task list for multi-step work (3+ steps). Use for complex tasks with 3+ steps or when the user provides multiple tasks. For 'all N items' tasks, enumerate every instance as its own checklist item so none are silently dropped. Call with no parameters to read the current list.\nList order is priority. Only ONE item in_progress at a time. Break large phases into subtasks via parent. Mark an item completed only after the work is verified done, never based on intent. If something fails, cancel it and add a revised item. Always returns the full current list.",
+    "description": "跟踪与推进复杂多步骤任务（3 个步骤及以上）的实施进度列表。当任务包含 3 个以上阶段或用户一次性下达多项指令时必须使用本工具。对于“处理全部 N 项”的任务，必须将每一个具体实例单独列为清单项，避免被悄悄漏掉任何一项。不传参数调用时用于读取当前任务列表。\n\n【执行纪律】：列表顺序即为优先级；同一时刻仅允许一项任务处于进行中 in_progress 状态；通过 parent 字段将庞大阶段拆解为子任务；必须在实际测试验证通过后才能标记为完成，绝不能凭感觉以为写完了就提前打勾 completed；若某步骤失败，将其置为已取消 cancelled并追加修正项。",
+    "params": {
+      "todos": "需要写入或更新的任务项列表。"
+    },
+    "params_en": {
+      "todos": "Task items to write.",
+      "merge": "true: update existing items by id, add new ones. false (default): replace the entire list with a fresh plan."
+    }
+  },
+  "gui_tour": {
+    "en": "Run a guided desktop GUI tour: dim the screen, highlight elements, add popovers. Surfaces: 'app' (Hermes itself) or 'preview' (the page in the preview pane). A general look around the app is ONE call: action='start' with no steps runs the app's built-in tour (preset 'quick' or 'full', default full). For a custom tour, call action='targets' first — prefer targets marked stable:true (their selectors survive re-renders); re-scan if one stops matching. Then narrate with action='show' (one highlight per call, replaces the last — pair each with a chat message) or hand over with action='start' + steps (user gets Next/Prev; 'next'/'prev' also page it). 'stop' clears. Use for how-does-X-work / where-is-Y walkthroughs.",
+    "description": "在桌面界面执行引导式导览：调暗屏幕、高亮元素、附加带标题的浮层说明。范围：'app'（Hermes 本身）或 'preview'（预览窗格中的页面）。想大致浏览整个应用，一次调用即可：action='start' 不传步骤，运行内置导览（preset 取 'quick' 或 'full'，默认 full）。自定义导览时先调 action='targets'——优先选标记为 stable:true 的目标（其选择器在重渲染后仍有效）；某个目标不再匹配时重新扫描。随后用 action='show' 逐条讲解（每次一个高亮，替换上一个，配合一条对话消息），或用 action='start' 加步骤交给用户自行翻页（用户可点上一页/下一页，'next'/'prev' 也能翻页）。'stop' 清除。适用于「某个功能怎么用」「某个东西在哪里」这类讲解。",
+    "params": {
+      "action": "向导操作指令（start 启动、targets 获取可选元素选择器、show 展示单个步骤高亮气泡、stop 结束清除、next 下一步、prev 上一步）。",
+      "surface": "引导的目标界面范围（'app' 客户端自身界面，或 'preview' 右侧预览面板），默认为 'app'。",
+      "selector": "show 操作时需要高亮的目标元素选择器（建议从 targets 中选取 stable 标记项；省略时在屏幕中央展示说明浮窗）。",
+      "title": "show 操作时弹出气泡的标题文字。",
+      "text": "show 操作时弹出气泡的正文说明。",
+      "side": "show 操作时弹出气泡相对于高亮元素的方位（top, bottom, left, right；省略时自动选择合适位置）。",
+      "steps": "start 操作时传入的分步引导列表（每项包含 selector、title、text、side；省略时启动客户端内置向导）。",
+      "preset": "未提供自定义 steps 时使用的内置向导预设方案（'quick' 快速版包含 4 个核心功能，'full' 完整版）。",
+      "step_index": "start 操作时起始展示的步骤索引（从 0 开始计数）。"
+    },
+    "params_en": {
+      "action": "start alone runs the built-in tour; targets first for custom steps.",
+      "surface": "'app' (default) or 'preview'.",
+      "selector": "show: selector from targets (prefer stable). Omit = centered narration.",
+      "title": "show: popover title.",
+      "text": "show: popover body.",
+      "side": "show: popover side; omit to auto-place.",
+      "steps": "start: ordered steps; omit for the built-in tour.",
+      "preset": "start without steps: 'quick' (four essentials) or 'full'.",
+      "step_index": "start: 0-indexed first step."
+    }
+  },
+  "text_to_speech": {
+    "en": "Convert text to speech audio. Returns a MEDIA: path that the platform delivers as native audio. Compatible providers render as a voice bubble on Telegram; otherwise audio is sent as a regular attachment. In CLI mode, saves to ~/voice-memos/. Voice and provider are user-configured (built-in providers like edge/openai or custom command providers under tts.providers.<name>), not model-selected.",
+    "description": "将指定的文本内容转换为语音音频。执行成功后返回标准的 MEDIA: 音频文件绝对路径，在桌面客户端或通讯平台中直接作为原生语音呈现或作为附件交付。在终端模式下，音频默认保存至 ~/voice-memos/ 目录。语音发音人与底层提供方由系统配置文件设定（支持 edge 或 openai 等服务商），大模型无需手动指定。",
+    "params": {
+      "text": "需要转换为语音的纯文本内容。系统会自动依据提供方的单次字符上限进行平滑分块处理（如 OpenAI 上限 4096 字符、xAI 上限 15000 字符、MiniMax 上限 10000 字符），长文本会自动按顺序分段合成，绝不静默截断。",
+      "output_path": "可选的自定义音频输出文件物理绝对路径。省略时默认保存至系统音频缓存目录。",
+      "speed": "语音播放速度倍率（浮点数）。1.0 为正常语速，0.5 为慢速（适合语言学习），2.0 为快速。有效取值范围为 0.25 到 4.0。",
+      "instructions": "可选的声音情绪与语调指导提示词（例如 '用沉稳、严谨且温和的语气播报'）。支持的声音引擎会自动遵循该指示。"
+    },
+    "params_en": {
+      "text": "The text to convert to speech. Provider-specific per-request character caps apply automatically (OpenAI 4096, xAI 15000, MiniMax 10000, ElevenLabs 5k-40k depending on model); longer input is split into ordered chunks without silent truncation.",
+      "speed": "Playback speed multiplier. 1.0 = normal, 0.5 = very slow (language learning), 2.0 = fast. Range: 0.25-4.0. Overrides the speed configured in config.yaml.",
+      "instructions": "Optional voice-design guidance: tone, emotion, pacing, accent, whispering, impressions (e.g. 'Speak in a cheerful, excited whisper'). Forwarded to the OpenAI backend (gpt-4o-mini-tts and OpenAI-compatible voice-design servers). Silently ignored by backends that don't support it."
+    }
+  },
+  "vision_analyze": {
+    "en": "Load an image into the conversation so you can see it. Call it any time the user references an image — then answer from what you see.",
+    "description": "将指定图片加载进当前对话上下文中，使大模型能够直接在视觉通道查看图像像素。每当用户在提问中提及图片、上传图片或需要审阅界面截图时调用本工具——加载后直接依据视觉看到的真实内容进行回答。",
+    "params": {
+      "image_url": "需要加载的图片网络链接（http/https）、本地文件绝对路径或 Base64 编码的 data: 图片数据。",
+      "question": "针对该图片需要分析、核验或解答的具体问题或观察要求。",
+      "region": "可选的局部裁剪坐标区域 [x1, y1, x2, y2]（基于原图像素坐标系），在下采样缩放前执行裁剪以保持局部原始高分辨率。推荐先加载全图，若需看清局部细微文字或精密细节，再传入具体坐标区域二次调用进行放大核验。"
+    },
+    "params_en": {
+      "image_url": "Image URL (http/https), local file path, or data: URL to load.",
+      "question": "Your question or request about the image.",
+      "region": "Optional [x1, y1, x2, y2] crop in ORIGINAL-image pixel coordinates, applied before any downscaling — the crop keeps full resolution. Load the full image first, then re-call with a region to zoom into small text or fine detail."
+    }
+  },
+  "video_analyze": {
+    "en": "Analyze a video from a URL or local file path using a multimodal AI model. Sends the video to a video-capable model (e.g. Gemini) for understanding. Use this for video files — for images, use vision_analyze instead. Supports mp4, webm, mov, avi, mkv, mpeg formats. Note: large videos (>20 MB) may be slow; max ~50 MB.",
+    "params": {
+      "video_url": "需要分析的视频网址（http/https）或本地文件绝对路径。",
+      "question": "针对视频画面的具体提问或分析要求。智能体将结合时间戳与关键帧画面进行解答。"
+    },
+    "params_en": {
+      "video_url": "Video URL (http/https) or local file path to analyze.",
+      "question": "Your specific question about the video. The AI will describe what happens in the video and answer your question."
+    }
+  },
+  "web_search": {
+    "en": "Search the web: returns titles, URLs and snippets (5 by default). Read pages with web_extract. The query is passed through to the configured backend, so operators such as site:domain, filetype:pdf, intitle:word, -term, and \"exact phrase\" may work when the backend supports them.",
+    "description": "在互联网上检索信息：返回标题、网址与摘要（默认 5 条）。需要读页面正文请用 web_extract。检索词会原样传给配置的检索后端，因此后端支持时可用 site:域名、filetype:pdf、intitle:词、-排除词、\"精确短语\" 等语法。",
+    "params": {
+      "query": "需要查询的搜索关键词文本，可包含底层检索服务支持的高级搜索语法（如 site:域名、filetype:pdf、\"精确短语\" 等）。",
+      "limit": "单次允许返回的最大搜索结果条数（默认 5 条，取值范围 1 到 100）。"
+    },
+    "params_en": {
+      "query": "The search query to look up on the web. You may include backend-supported operators such as site:example.com, filetype:pdf, intitle:word, -term, or \"exact phrase\".",
+      "limit": "Maximum number of results to return. Defaults to 5."
+    }
+  },
+  "web_extract": {
+    "en": "Extract content from web page URLs. Returns clean page content in markdown/text (no LLM summarization — fast). Also works with PDF URLs (arxiv papers, documents) — pass the PDF link directly. Pages within the char budget (default 15000) return whole; larger pages return a head+tail window with a footer telling you the full text's saved file path and the read_file call to page through the omitted middle. Inline images appear as [IMAGE: alt] placeholders; real image URLs are kept as links. If a URL fails, times out, or needs JS, login or clicks, use a browser tool instead.",
+    "description": "从网页链接提取正文内容。返回干净的 Markdown 或纯文本（不经大模型压缩，速度快）。也支持 PDF 链接（学术论文、文档），直接传 PDF 地址即可。在字数预算内（默认 15000）的页面整篇返回；超出时返回首尾窗口，并在末尾说明完整正文的保存路径与翻页读取的方法。页面内嵌图片显示为 [IMAGE: 替代说明] 占位符，真实图片链接保留为可用链接。若链接抓取失败、超时，或页面需要 JavaScript、登录、点击，请改用浏览器工具。",
+    "params": {
+      "urls": "需要提取正文内容的网页链接列表（单次调用最多支持传入 5 个链接）。",
+      "char_limit": "单次返回的最大字数限制（默认为 15000 字符，最低 2000 字符）。针对长篇深度文章可适度调高此参数以获取更完整的内容。"
+    },
+    "params_en": {
+      "urls": "List of URLs to extract content from (max 5 URLs per call)",
+      "char_limit": "Optional per-page character budget sent back (default 15000). Pages larger than this are head+tail truncated with the full text stored to disk. Raise it when you need more of a long page inline."
+    }
+  },
+  "yb_query_group_info": {
+    "en": "Query a group's name, owner and member count (a group is '派/Pai' in the app).",
+    "description": "查询群组（应用中称为「派」）的名称、群主与成员数。",
+    "params_en": {
+      "group_code": "The unique group identifier (group_code)."
+    }
+  },
+  "yb_send_dm": {
+    "en": "Send a private message (DM / 私信) to a group member by name, with optional media. It looks the user up in the group member list (or pass user_id if known). Use it when someone asks to privately message a user. Supports text, images, and file attachments.",
+    "description": "按名称向群成员发送私信（DM / 私信），可附带媒体文件。工具会在群成员列表中查找该用户（已知 user_id 时也可直接传入）。有人要求私信某用户时使用。支持文本、图片与文件附件。",
+    "params_en": {
+      "group_code": "The group where the target user belongs. Extract from chat_id: 'group:328306697' → '328306697'. Required when user_id is not provided.",
+      "name": "Target user's display name (partial match, case-insensitive). Required when user_id is not provided.",
+      "message": "The message text to send as a DM. Can be empty if only sending media.",
+      "user_id": "Target user's account ID. If provided, skips the member lookup. Usually obtained from a previous yb_query_group_members call.",
+      "media_files": "Optional list of media files to send along with the DM. Images (.jpg/.png/.gif/.webp/.bmp) are sent as image messages; other files are sent as document attachments."
+    }
+  },
+  "yb_query_group_members": {
+    "en": "Query members of a group (called '派/Pai' in the app). Use this tool when you need to @mention someone, find a user by name, list bots (including Yuanbao AI), or list all members. IMPORTANT: You MUST call this tool before @mentioning any user, because you need the exact nickname to construct the @mention format.",
+    "description": "Query members of a group (called '派/Pai' in the app). Use this tool when you need to @mention someone, find a user by name, list bots (including Yuanbao AI), or list all members. IMPORTANT: You MUST call this tool before @mentioning any user, because you need the exact nickname to construct the @mention format.",
+    "params_en": {
+      "group_code": "The unique group identifier (group_code).",
+      "action": "find — search a user by name (use when you need to @mention or look up someone); list_bots — list bots and Yuanbao AI assistants; list_all — list all members.",
+      "name": "User name to search (partial match, case-insensitive). Required for 'find'. Use the name the user mentioned in the conversation.",
+      "mention": "Set to true when you need to @mention/at someone in your reply. The response will include the exact @mention format to use."
+    }
+  },
+  "yb_search_sticker": {
+    "en": "Search the built-in Yuanbao sticker (TIM face / 表情包) catalogue by keyword. Returns the top matching candidates with sticker_id, name, and description. Use this BEFORE yb_send_sticker to discover the right sticker_id. Sticker = 贴纸 = TIM face — NOT a message reaction. Prefer sending a sticker over bare Unicode emoji when reacting/expressing emotion.",
+    "description": "Search the built-in Yuanbao sticker (TIM face / 表情包) catalogue by keyword. Returns the top matching candidates with sticker_id, name, and description. Use this BEFORE yb_send_sticker to discover the right sticker_id. Sticker = 贴纸 = TIM face — NOT a message reaction. Prefer sending a sticker over bare Unicode emoji when reacting/expressing emotion.",
+    "params": {
+      "query": "Search keyword (Chinese or English, e.g. '666', '比心', 'cool', '吃瓜'). Empty string returns the first N stickers."
+    },
+    "params_en": {
+      "query": "Search keyword (Chinese or English, e.g. '666', '比心', 'cool', '吃瓜'). Empty string returns the first N stickers.",
+      "limit": "Max number of candidates to return (default 10, max 50)."
+    }
+  },
+  "yb_send_sticker": {
+    "en": "Send a built-in sticker (TIMFaceElem / 贴纸表情) to the current Yuanbao chat. Call yb_search_sticker first if you don't know the sticker_id/name. Sticker = 贴纸 = TIM face — NOT a message reaction. CRITICAL: Whenever the user asks you to send a sticker / 贴纸 / 表情包, you MUST use this tool. DO NOT draw a PNG via execute_code / Pillow / matplotlib and then call send_image_file — that produces a fake 'sticker' image instead of a real TIM face and is the WRONG path. If no suitable sticker_id is known, call yb_search_sticker first. When the recent thread shows users sending stickers, prefer matching that tone by replying with a sticker instead of (or in addition to) text.",
+    "description": "Send a built-in sticker (TIMFaceElem / 贴纸表情) to the current Yuanbao chat. Call yb_search_sticker first if you don't know the sticker_id/name. Sticker = 贴纸 = TIM face — NOT a message reaction. CRITICAL: Whenever the user asks you to send a sticker / 贴纸 / 表情包, you MUST use this tool. DO NOT draw a PNG via execute_code / Pillow / matplotlib and then call send_image_file — that produces a fake 'sticker' image instead of a real TIM face and is the WRONG path. If no suitable sticker_id is known, call yb_search_sticker first. When the recent thread shows users sending stickers, prefer matching that tone by replying with a sticker instead of (or in addition to) text.",
+    "params": {
+      "sticker": "Sticker name (e.g. '六六六', '比心', 'ok') or numeric sticker_id (e.g. '278'). Empty string sends a random built-in sticker."
+    },
+    "params_en": {
+      "sticker": "Sticker name (e.g. '六六六', '比心', 'ok') or numeric sticker_id (e.g. '278'). Empty string sends a random built-in sticker.",
+      "chat_id": "Target chat. Defaults to the current session. Format: 'direct:{account_id}', 'group:{group_code}', or bare account_id.",
+      "reply_to": "Optional ref_msg_id to quote-reply (group chat only)."
+    }
+  },
+  "message_agent": {
+    "en": "Send a message to ANOTHER agent (teammate) on this install, or to an agent on a registered peer gateway. This is FIRE-AND-FORGET and asynchronous, like texting: it validates the target against the live roster, delivers your message into that agent's own Bot Chat with your attribution automatically prefixed, and returns immediately with a dispatch acknowledgement — status queued plus a delivery_id (the hand-off to a background delivery process, not a delivery receipt). It does NOT return their reply and you must not wait or poll for one — send it, finish your turn, and that process's completion notification wakes you with the outcome: their reply, or the delivery failure — unless the ack returns reply_delivery=\"poll\", in which case follow its process(action=\"wait\") instruction before ending the turn. COMPOSE the message yourself: write what YOU want to say to that agent (lead with the point; include the concrete ask or result). Never paste the user's words verbatim — paraphrase the actionable substance, and keep private 1:1 chat content private. Message one clearly relevant teammate when it genuinely helps the user's goal; don't fan out to several agents unless the user explicitly asked. Use the teammate roster in your system prompt (names + roles) to pick the right recipient; targets: a teammate name (e.g. 'researcher'), '<peer>/<agent>' for an agent on a registered peer gateway (e.g. 'spark/researcher', or just '<peer>' for the peer's main agent), or an agent on another connected machine from your roster (use '<handle>@<connection>' if the same handle exists on several).",
+    "description": "向本机上的另一个智能体（协作成员）发送消息，或向已注册的对端网关上的智能体发送消息。本工具发出后即返回、不等待结果，属于异步方式，类似发短信：它会对照当前在线名单校验目标，把你的消息投递到该智能体自己的对话窗口，并自动加上你的署名，随即返回派发确认（状态为已排队，附带 delivery_id，表示已交给后台投递进程，并不代表已经送达）。它不会返回对方的回复，你也不要等待或轮询：发出后结束本轮，后台进程完成时会以通知唤醒你，带来对方回复或投递失败的结果。例外情况是确认信息返回 reply_delivery=\"poll\"，此时须按其中的 process(action=\"wait\") 指示操作后再结束本轮。消息内容由你自己组织：写你想对那个智能体说的话，先说要点，再给具体的请求或结果。不要直接照抄用户原话，应转述其中可执行的实质内容，并保护一对一私聊的隐私。只在确实有助于用户目标时联系一个明确相关的协作成员，用户未明确要求时不要群发给多个智能体。用系统提示中的协作成员名单（名称与职责）挑选收件人。目标写法：协作成员名称（例如 'researcher'）；已注册对端网关上的智能体写作 '<peer>/<agent>'（例如 'spark/researcher'，只写 '<peer>' 表示该对端的主智能体）；名单中另一台已连接机器上的智能体，若同一名称存在于多处，写作 '<handle>@<connection>'。",
+    "params": {
+      "target": "消息发往何处：名单中的协作成员名称（'researcher'；'hermes' 表示默认智能体），或已注册对端网关的 '<peer>' / '<peer>/<agent>'。"
+    },
+    "params_en": {
+      "target": "Who to message: a teammate profile name from your roster ('researcher', 'hermes' for the default agent), or '<peer>' / '<peer>/<agent>' for a registered peer gateway."
+    }
+  },
+  "browser_cdp": {
+    "description": "直接调用浏览器的调试协议（CDP）方法，用于执行内置浏览器工具未覆盖的底层操作。",
+    "params": {
+      "method": "CDP 方法名，例如 'Target.getTargets'、'Runtime.evaluate'、'Page.handleJavaScriptDialog'。",
+      "params": "该方法专用的参数，以 JSON 对象传入。方法不需要参数时省略或传 {}。",
+      "target_id": "可选。来自 Target.getTargets 结果中的目标或标签页编号（每项的 'targetId'）。用于顶层标签页范围内的页面级方法。与 frame_id 互斥。",
+      "frame_id": "可选。来自 browser_snapshot.frame_tree.children[] 中 is_oopif=true 的跨进程内嵌框架编号。设置后会把调用转交给 CDP 监管进程为该框架维持的活动会话。在跨源内嵌框架内执行 Runtime.evaluate 时必须使用，在 Browserbase 上尤其如此，因为每次调用新建的 CDP 连接跟不上签名地址的轮换。同源内嵌框架则改用顶层页面 Runtime.evaluate 中的父级 contentWindow/contentDocument。",
+      "timeout": "超时秒数（默认 30，最大 300）。"
+    },
+    "params_en": {
+      "method": "CDP method name, e.g. 'Target.getTargets', 'Runtime.evaluate', 'Page.handleJavaScriptDialog'.",
+      "params": "Method-specific parameters as a JSON object. Omit or pass {} for methods that take no parameters.",
+      "target_id": "Optional. Target/tab ID from Target.getTargets result (each entry's 'targetId'). Use for page-level methods at the top-level tab scope. Mutually exclusive with frame_id.",
+      "frame_id": "Optional. Out-of-process iframe (OOPIF) frame id from Page.getFrameTree. When set, routes the call through the CDP supervisor's live session for that iframe. Essential for Runtime.evaluate inside cross-origin iframes, especially on Browserbase where fresh per-call CDP connections can't keep up with signed URL rotation. For same-origin iframes, use parent contentWindow/contentDocument from Runtime.evaluate at the top-level page instead.",
+      "timeout": "Timeout in seconds (default 30, max 300)."
+    }
+  },
+  "browser_dialog": {
+    "en": "Accept or dismiss a native JS dialog (alert/confirm/prompt) blocking the page.\n\n**Workflow:** when a page is blocked by a native dialog the CDP supervisor captured, call this tool with ``action='accept'`` or ``action='dismiss'``.\n\n**Prompt dialogs:** pass ``prompt_text`` to supply the response string. Ignored for alert/confirm/beforeunload.\n\n**Multiple dialogs:** if more than one dialog is queued (rare — happens when a second dialog fires while the first is still open), pass ``dialog_id`` (the error lists the candidates) to disambiguate.\n\n**Availability:** only present when a CDP endpoint is attached — a local Chromium-family browser via ``/browser connect``, or ``browser.cdp_url`` in config.yaml.",
+    "description": "接受或关闭阻塞页面的浏览器原生对话框（alert、confirm、prompt）。\n\n**操作步骤：** 当页面被 CDP 监管进程捕获的原生对话框阻塞时，调用本工具，传入 ``action='accept'`` 或 ``action='dismiss'``。\n\n**输入型对话框：** 传 ``prompt_text`` 提供应答字符串。对 alert、confirm、beforeunload 无效。\n\n**多个对话框：** 若排队的对话框不止一个（少见，出现在第一个尚未关闭时又弹出第二个的情况），用 ``dialog_id`` 指定（出错时会列出候选编号）。\n\n**可用条件：** 仅在接入 CDP 端点时提供，包括通过 ``/browser connect`` 连接的本地 Chromium 系浏览器，或 config.yaml 中配置的 ``browser.cdp_url``。",
+    "params": {
+      "action": "'accept' 表示点击确定，或返回输入的文本；'dismiss' 表示点击取消，prompt() 返回空值。对 ``beforeunload`` 对话框：'accept' 允许离开页面，'dismiss' 留在当前页面。",
+      "prompt_text": "``prompt()`` 对话框的应答字符串。对其他类型无效。默认为空字符串。",
+      "dialog_id": "要响应的对话框，取自上一次调用列出的候选编号。仅在多个对话框排队时需要。",
+      "frame_id": "可选。来自 Page.getFrameTree 的跨进程内嵌框架编号。设置后会把调用转交给 CDP 监管进程为该框架维持的活动会话。在跨源内嵌框架内执行 Runtime.evaluate 时必须使用，在 Browserbase 上尤其如此，因为每次调用新建的 CDP 连接跟不上签名地址的轮换。同源内嵌框架则改用顶层页面 Runtime.evaluate 中的父级 contentWindow/contentDocument。"
+    },
+    "params_en": {
+      "action": "'accept' clicks OK / returns the prompt text. 'dismiss' clicks Cancel / returns null from prompt(). For ``beforeunload`` dialogs: 'accept' allows the navigation, 'dismiss' keeps the page.",
+      "prompt_text": "Response string for a ``prompt()`` dialog. Ignored for other dialog types. Defaults to empty string.",
+      "dialog_id": "Specific dialog to respond to, from the candidate ids a previous call listed. Required only when multiple dialogs are queued."
+    }
+  },
+  "feishu_doc_read": {
+    "en": "Read the full content of a Feishu/Lark document as plain text. Useful when you need more context beyond the quoted text in a comment.",
+    "description": "以纯文本形式读取飞书（Lark）文档的完整内容。需要超出评论中引用片段的更多上下文时使用。",
+    "params": {
+      "doc_token": "文档标识（取自文档网址或评论上下文）。"
+    },
+    "params_en": {
+      "doc_token": "The document token (from the document URL or comment context)."
+    }
+  },
+  "feishu_drive_list_comments": {
+    "en": "List comments on a Feishu document. Use is_whole=true to list whole-document comments only.",
+    "description": "列出飞书文档上的评论。is_whole=true 时只列出全文评论。",
+    "params": {
+      "is_whole": "设为 true 时只返回全文评论。",
+      "page_size": "每页返回的评论条数（最多 100）。"
+    },
+    "params_en": {
+      "is_whole": "If true, only return whole-document comments.",
+      "page_size": "Number of comments per page (max 100)."
+    }
+  },
+  "feishu_drive_list_comment_replies": {
+    "en": "List all replies in a comment thread on a Feishu document.",
+    "description": "列出飞书文档某条评论下的全部回复。",
+    "params": {
+      "comment_id": "要列出回复的评论标识。",
+      "page_size": "每页返回的回复条数（最多 100）。"
+    },
+    "params_en": {
+      "comment_id": "The comment ID to list replies for.",
+      "page_size": "Number of replies per page (max 100)."
+    }
+  },
+  "feishu_drive_reply_comment": {
+    "en": "Reply to a local comment thread on a Feishu document. Use this for local (quoted-text) comments. For whole-document comments, use feishu_drive_add_comment instead.",
+    "description": "回复飞书文档上的局部评论。用于局部（引用文本）评论。全文评论请改用 feishu_drive_add_comment。",
+    "params": {
+      "comment_id": "要回复的评论标识。",
+      "content": "回复正文（仅纯文本，不支持 markdown）。"
+    },
+    "params_en": {
+      "comment_id": "The comment ID to reply to.",
+      "content": "The reply text content (plain text only, no markdown)."
+    }
+  },
+  "feishu_drive_add_comment": {
+    "en": "Add a new whole-document comment on a Feishu document. Use this for whole-document comments or as a fallback when reply_comment fails with code 1069302.",
+    "description": "在飞书文档上新增一条全文评论。用于全文评论，或在 reply_comment 返回错误码 1069302 时作为替代方式。",
+    "params": {
+      "content": "评论正文（仅纯文本，不支持 markdown）。"
+    },
+    "params_en": {
+      "content": "The comment text content (plain text only, no markdown)."
+    }
+  },
+  "image_generate": {
+    "en": "Generate or edit images with the configured model. Edit/reference capabilities are rendered at serving time.",
+    "description": "使用已配置的模型生成或编辑图片。编辑与参考能力在服务端渲染时决定。",
+    "params": {
+      "prompt": "描述目标图片的文字（文生图），或要施加的编辑（图生图）。请写得具体详细。",
+      "aspect_ratio": "生成图片的宽高比。'landscape' 为 16:9 横向，'portrait' 为 16:9 纵向，'square' 为 1:1。"
+    },
+    "params_en": {
+      "prompt": "The text prompt describing the desired image (text-to-image) or the edit to apply (image-to-image). Be detailed and descriptive.",
+      "aspect_ratio": "The aspect ratio of the generated image. 'landscape' is 16:9 wide, 'portrait' is 16:9 tall, 'square' is 1:1."
+    }
+  },
+  "react_to_message": {
+    "en": "React to a message with a single emoji, the way you'd tapback in iMessage. Reach for it when a reaction is what a person would do: something funny gets a 😂, warmth gets a ❤️, a plan you're on board with gets a 👍 — then just carry on with whatever the message actually needs. If a reaction says it all, it can BE the reply (skip the redundant 'sounds good!' turn). Use it like a person would: occasionally, when felt — not on every message, and never as a status signal. NEVER narrate or explain a reaction ('I reacted with...', 'Reacting now') — the emoji appearing on the bubble is the whole point, and commentary kills it. Defaults to the user's most recent message. One reaction per message: a different emoji replaces yours, an empty string retracts it.",
+    "description": "给消息加一个表情回应，类似在聊天软件里点按回应。当人的自然反应就是加表情时使用：好笑的内容回 😂，暖心的回 ❤️，认同的计划回 👍，然后继续处理消息本身需要的事。若表情已足以表达，它可以就是回复，不必再补一句「好的」。像人一样使用：偶尔为之，有感而发，不要每条都加，也不要当作状态信号。绝不要叙述或解释你的回应（例如「我回应了……」「正在回应」），表情出现在消息上本身就是目的，加说明反而破坏效果。默认对用户最近一条消息回应。每条消息只保留一个回应：换一个表情会替换原有的，传空字符串则撤回。",
+    "params": {
+      "emoji": "用于回应的表情（例如 '❤️'、'😂'、'👍'）。传空字符串可移除你的回应。",
+      "message_row_id": "可选。要回应的具体消息。省略则回应用户最近一条消息，通常这就是你要的效果。",
+      "messages_back": "可选。回应更早的用户消息：1 表示最近一条之前的，2 表示再往前一条，依此类推。适用于事后才反应过来的时候，例如答完才领会到的笑点。"
+    },
+    "params_en": {
+      "emoji": "The emoji to react with (e.g. '❤️', '😂', '👍'). Pass an empty string to remove your reaction.",
+      "message_row_id": "Optional. The specific message to react to. Omit to react to the user's latest message, which is almost always what you want.",
+      "messages_back": "Optional. React to an EARLIER user message: 1 = the one before the latest, 2 = two before, and so on. For when something lands late — the joke you only got after answering."
+    }
+  },
+  "setup_beat": {
+    "en": "Run the first-run onboarding in this chat. Shows the card for a beat and waits for the user, then returns their answer and what to do next. beat=next shows the next beat. Pass value to record an answer they gave in words, skip to record that they skipped a beat. The build card needs options: your picks from the list its reminder gives. beat=done ends onboarding after the first build is shown and its close card is answered. Nothing here ends it early: a user who wants to stop presses Skip setup.",
+    "description": "在本对话中执行首次使用引导。显示某一环节的界面并等待用户，然后返回用户的答复与下一步操作。beat=next 显示下一个环节。传 value 记录用户口头给出的答复，传 skip 记录用户跳过了该环节。构建环节需要 options：从该环节提示给出的列表中选取。beat=done 在首个构建展示完毕且其结束界面已答复后结束引导。此处没有提前结束的方式：想中止的用户可点击「跳过设置」。",
+    "params": {
+      "question": "显示在界面上方的一句话。",
+      "value": "记录用户口头给出的答复（一个名称或选项编号）。不显示界面。",
+      "skip": "用户口头表示跳过本环节。不显示界面。",
+      "suggest": "仅连接器环节：标记为「建议」的连接项。",
+      "options": "仅构建环节：最多四项选择，编号取自列表。"
+    },
+    "params_en": {
+      "question": "Your line above the card.",
+      "value": "Record an answer given in words (a name, or an option id). No card.",
+      "skip": "They skipped this beat in words. No card.",
+      "suggest": "connectors only: slugs pinned as Suggested.",
+      "options": "build only: up to four picks, ids from the list."
+    }
+  },
+  "video_generate": {
+    "en": "(rebuilt at get_definitions() time — see _build_dynamic_video_schema)",
+    "description": "根据文字描述生成视频。可指定画面内容、运动、主体、风格与镜头运动。",
+    "params": {
+      "prompt": "描述目标视频的文字指令，包含运动、主体、风格、镜头运动等。",
+      "duration": "期望的视频时长（秒）。服务方会按其支持范围收窄。省略则用服务方默认值。",
+      "aspect_ratio": "输出画面的宽高比。",
+      "resolution": "输出分辨率。"
+    },
+    "params_en": {
+      "prompt": "Text instruction describing the desired video, motion, subject, style, camera movement, etc.",
+      "duration": "Desired video duration in seconds. Providers clamp to their supported range. Omit for the provider default.",
+      "aspect_ratio": "Output aspect ratio.",
+      "resolution": "Output resolution."
+    }
+  },
+  "x_search": {
+    "en": "Search X (Twitter) posts, profiles and threads via xAI's built-in X Search. Read-only discovery only: use this for current discussion, reactions, or claims on public X rather than general web pages. Do not use it to post, reply, like, DM, upload media, delete, or inspect the user's authenticated X account — those require a separate authenticated X API surface outside this tool. Available when xAI credentials are configured (SuperGrok OAuth or XAI_API_KEY).",
+    "description": "通过 xAI 内置的 X 搜索检索 X（推特）上的帖子、账号与讨论串。仅用于只读检索：适合了解公开 X 上的当前讨论、反应或说法，不用于一般网页。不要用它发帖、回复、点赞、私信、上传媒体、删除内容或查看用户已认证的 X 账号，这些操作需要本工具之外的独立认证接口。仅在配置了 xAI 凭据（SuperGrok 授权或 XAI_API_KEY）时可用。",
+    "params": {
+      "query": "要在 X 上查什么。",
+      "allowed_x_handles": "可选。仅纳入这些 X 账号（最多 10 个）。",
+      "excluded_x_handles": "可选。排除这些 X 账号（最多 10 个）。",
+      "from_date": "可选。起始日期，格式 YYYY-MM-DD。",
+      "to_date": "可选。结束日期，格式 YYYY-MM-DD。",
+      "enable_image_understanding": "是否让 xAI 分析匹配到的 X 帖子所附图片。",
+      "enable_video_understanding": "是否让 xAI 分析匹配到的 X 帖子所附视频。"
+    },
+    "params_en": {
+      "query": "What to look up on X.",
+      "allowed_x_handles": "Optional list of X handles to include exclusively (max 10).",
+      "excluded_x_handles": "Optional list of X handles to exclude (max 10).",
+      "from_date": "Optional start date in YYYY-MM-DD format.",
+      "to_date": "Optional end date in YYYY-MM-DD format.",
+      "enable_image_understanding": "Whether xAI should analyze images attached to matching X posts.",
+      "enable_video_understanding": "Whether xAI should analyze videos attached to matching X posts."
+    }
+  }
+}
