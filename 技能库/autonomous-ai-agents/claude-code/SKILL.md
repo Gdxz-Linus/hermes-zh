@@ -9,7 +9,7 @@ metadata:
   hermes:
     tags: [claude-code, 编码智能体, 任务委托, 自动化开发, anthropic, 智能体协同]
     category: autonomous-ai-agents
-    related_skills: [codex, requesting-code-review, code-audit]
+    related_skills: [codex, requesting-code-review]
 ---
 
 # Claude Code CLI 智能体调度技能

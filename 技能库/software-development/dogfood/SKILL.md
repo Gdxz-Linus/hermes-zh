@@ -9,7 +9,7 @@ metadata:
   hermes:
     tags: [功能测试, 探索性qa, 缺陷复现, 浏览器驱动, 控制台错误, 质量保证]
     category: software-development
-    related_skills: [runtime-verification, code-audit, sdlc-review]
+    related_skills: [sdlc-review]
 ---
 
 # Web 应用探索性测试与缺陷取证指南（Dogfood QA）

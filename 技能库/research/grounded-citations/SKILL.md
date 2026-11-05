@@ -9,7 +9,7 @@ metadata:
   hermes:
     tags: [事实核验, 引用依据, 来源溯源, 严谨表达, 真实依据]
     category: research
-    related_skills: [arxiv, pdf, code-audit]
+    related_skills: [arxiv, pdf]
 ---
 
 # 事实依据与来源引用核验技能（Grounded Citations）

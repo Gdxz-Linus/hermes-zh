@@ -9,7 +9,7 @@ metadata:
   hermes:
     tags: [codex, 编码智能体, 任务委托, 沙箱隔离, 工作树, 对抗审查]
     category: autonomous-ai-agents
-    related_skills: [requesting-code-review, code-audit, runtime-verification]
+    related_skills: [requesting-code-review]
 ---
 
 # OpenAI Codex CLI 智能体调度技能

@@ -8,7 +8,7 @@ platforms: [linux, macos, windows]
 metadata:
   hermes:
     tags: [调试, 根因排查, 缺陷定位, 故障处理, 系统性分析]
-    related_skills: [test-driven-development, code-audit, runtime-verification]
+    related_skills: [test-driven-development]
 ---
 
 # 系统性根因排查（Systematic Debugging）

@@ -9,7 +9,7 @@ metadata:
   hermes:
     tags: [github, gh, git, pull-request, issues, 代码审查, ci-cd, 项目协同]
     category: software-development
-    related_skills: [requesting-code-review, code-audit, codebase-inspection]
+    related_skills: [requesting-code-review, codebase-inspection]
 ---
 
 # GitHub 协同与项目管理技能（GitHub Workflow）

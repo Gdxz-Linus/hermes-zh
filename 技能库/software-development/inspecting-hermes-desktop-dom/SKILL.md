@@ -9,7 +9,7 @@ metadata:
   hermes:
     tags: [hermes, 桌面端, electron, cdp, dom检查, css排查, 前端调试]
     category: software-development
-    related_skills: [hermes-desktop-build-and-install, node-inspect-debugger, systematic-debugging]
+    related_skills: [node-inspect-debugger, systematic-debugging]
 ---
 
 # Hermes 桌面端 DOM 与 CSS 样式实时排查指南（CDP）

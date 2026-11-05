@@ -8,7 +8,7 @@ platforms: [linux, macos, windows]
 metadata:
   hermes:
     tags: [代码审查, 静态扫描, 提交前检查, 安全门禁, 质量核验]
-    related_skills: [code-audit, systematic-debugging, runtime-verification]
+    related_skills: [systematic-debugging]
 ---
 
 # 提交前代码核验与审查准备（Requesting Code Review）

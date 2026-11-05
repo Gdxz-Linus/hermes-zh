@@ -9,7 +9,7 @@ metadata:
   hermes:
     tags: [软件生命周期, 质量审查, 验收判定, 代码复核, 交付检验]
     category: devops
-    related_skills: [requesting-code-review, code-audit, runtime-verification]
+    related_skills: [requesting-code-review]
 ---
 
 # 软件全生命周期质量审查技能（SDLC Review）

@@ -9,7 +9,7 @@ metadata:
   hermes:
     tags: [代码统计, LOC, 代码行数, 语言分布, 代码度量, pygount]
     category: software-development
-    related_skills: [code-audit, requesting-code-review, github]
+    related_skills: [requesting-code-review, github]
 ---
 
 # 代码仓库规模分析与代码统计技能（Codebase Inspection）

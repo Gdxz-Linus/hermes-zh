@@ -9,7 +9,7 @@ metadata:
   hermes:
     tags: [技术探针, spike, 原型验证, 可行性评估, 方案对比, 概念证明, poc]
     category: software-development
-    related_skills: [runtime-verification, systematic-debugging, simplify-code]
+    related_skills: [systematic-debugging, simplify-code]
 ---
 
 # 技术探针与可行性快速验证指南（Spike）

@@ -9,7 +9,7 @@ metadata:
   hermes:
     tags: [技能编写, 技能管理, 查重融合, 触发词规范, 技能准入, hermes-agent]
     category: software-development
-    related_skills: [requesting-code-review, code-audit]
+    related_skills: [requesting-code-review]
 ---
 
 # Hermes 技能编写与准入管理规范（Skill Authoring & Ingestion）

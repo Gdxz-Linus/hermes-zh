@@ -9,7 +9,7 @@ metadata:
   hermes:
     tags: [代码重构, 代码简化, 降低逻辑复杂度, 前置条件检查, 冗余清理, 质量提升]
     category: software-development
-    related_skills: [requesting-code-review, test-driven-development, code-audit]
+    related_skills: [requesting-code-review, test-driven-development]
 ---
 
 # 代码重构与精简技能（Simplify Code）
@@ -19,7 +19,7 @@ metadata:
 对近期编写或修改的代码实施系统性的质量重构与结构精简。通过并发运行四个维度的专项审查视角，消除重复逻辑、展平多层嵌套、精简过多的条件分支判断，消除临时性修补代码，提高既有代码的可读性与可维护性。
 
 **核心定位**：
-- **这是一次代码整洁度提升，而不是寻找功能缺陷**。本技能用于改进那些已经能够正常工作的代码结构；排查业务逻辑漏洞与安全缺陷应调用 `code-audit` 或 `requesting-code-review`。
+- **这是一次代码整洁度提升，而不是寻找功能缺陷**。本技能用于改进那些已经能够正常工作的代码结构；排查业务逻辑漏洞与安全缺陷应调用 `requesting-code-review`。
 - **坚决拒绝过渡抽象**：重构的目的是让代码更直观易懂，严禁为了所谓的“设计模式”而人为引入不必要的工厂类、多层委托包装或虚设接口。
 
 ---
