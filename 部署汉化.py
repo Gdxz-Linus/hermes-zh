@@ -40,19 +40,39 @@ PLUGIN_NAME = "zh-localization-overlay"
 
 
 def detect_hermes_home() -> Path:
-    """探测 Hermes 数据目录。"""
-    env = os.environ.get("HERMES_HOME")
+    """探测 Hermes 数据目录，三级依次尝试。
+
+    1. 环境变量 HERMES_HOME；
+    2. `hermes config path` 的输出——该命令返回 config.yaml 文件路径，取父目录；
+    3. 各平台默认位置，取实际存在的那一个。
+
+    Windows、Linux、macOS 通用，路径全部用 pathlib 构造，不拼接分隔符。
+    """
+    env = os.environ.get("HERMES_HOME", "").strip()
     if env:
-        return Path(env)
+        return Path(env).expanduser()
+
     try:
         out = subprocess.check_output(
             ["hermes", "config", "path"], stderr=subprocess.DEVNULL, timeout=20
         ).decode("utf-8", "replace").strip()
-        if out and Path(out).exists():
-            return Path(out)
+        if out:
+            p = Path(out).expanduser()
+            home = p.parent if p.is_file() or p.suffix in (".yaml", ".yml") else p
+            if home.is_dir():
+                return home
     except Exception:
         pass
-    return Path.home() / "AppData" / "Local" / "hermes"
+
+    if os.name == "nt":
+        default = Path.home() / "AppData" / "Local" / "hermes"
+    else:
+        default = Path.home() / ".hermes"
+
+    for cand in (Path.home() / ".hermes", Path.home() / "AppData" / "Local" / "hermes"):
+        if (cand / "config.yaml").is_file() or (cand / "hermes-agent").is_dir():
+            return cand
+    return default
 
 
 def sha256(path: Path) -> str:
