@@ -84,8 +84,10 @@ def _rewrite_tools(tools: list[Any]) -> tuple[list[Any], int]:
             result.append(tool)
             continue
         new_tool = dict(tool)
-        if isinstance(entry.get("description"), str):
-            new_tool["description"] = entry["description"]
+        # 空白译文跳过：保持英文，绝不把描述清空
+        desc = entry.get("description")
+        if isinstance(desc, str) and desc.strip():
+            new_tool["description"] = desc
             changed += 1
         params = entry.get("params")
         if isinstance(params, dict) and params:
@@ -95,9 +97,10 @@ def _rewrite_tools(tools: list[Any]) -> tuple[list[Any], int]:
                 if isinstance(props, dict):
                     new_props = {}
                     for pname, pschema in props.items():
-                        if pname in params and isinstance(pschema, dict):
+                        zh = params.get(pname)
+                        if isinstance(zh, str) and zh.strip() and isinstance(pschema, dict):
                             ps2 = dict(pschema)
-                            ps2["description"] = params[pname]
+                            ps2["description"] = zh
                             new_props[pname] = ps2
                             changed += 1
                         else:

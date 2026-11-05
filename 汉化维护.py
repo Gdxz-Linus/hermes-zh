@@ -116,8 +116,13 @@ def diff_tools(current: dict, mapping: dict) -> dict:
         if old_en and new_en and old_en != new_en:
             changed.append(f"{name}.description")
         old_ps = old.get("params_en", {})
+        old_zh = old.get("params", {})
         for pname, pdesc in data.get("params", {}).items():
-            if pname in old.get("params", {}) and pname in old_ps and old_ps[pname] != pdesc:
+            if pname not in old_ps:
+                # 官方给已有工具加了新参数，映射表里从未见过
+                changed.append(f"{name}.{pname}（新参数）")
+            elif pname in old_zh and old_ps[pname] != pdesc:
+                # 只对已翻译的参数报英文变化；未翻译的不构成待办
                 changed.append(f"{name}.{pname}")
     for name in mapping:
         if name not in current:
@@ -214,7 +219,8 @@ def main() -> int:
 def _run_compare(repo, core_tools, plugin_tools, prompts_map, workdir, args) -> int:
     """对比差异并可选应用。"""
     cur_core = scan_installed_tools(repo)
-    cur_plug = scan_installed_plugin_tools(lib.RUNTIME_PLUGINS_ROOT)
+    # 插件目录与安装目录同级：HERMES_HOME/plugins；--repo 指向别处时跟着走
+    cur_plug = scan_installed_plugin_tools(repo.parent / "plugins")
     cur_prompts = scan_installed_prompts(repo, workdir)
 
     print("对比当前安装版本与映射表：")
@@ -276,6 +282,23 @@ def _run_compare(repo, core_tools, plugin_tools, prompts_map, workdir, args) -> 
                 "zh": "",
             }
             added += 1
+
+        # 已有工具的新参数：补英文原文，中文留空待译
+        for key in list(t_core["changed"]) + list(t_plug["changed"]):
+            if not key.endswith("（新参数）"):
+                continue
+            full = key[: -len("（新参数）")]
+            tname, _, pname = full.rpartition(".")
+            for mapping, current in ((core_tools, cur_core), (plugin_tools, cur_plug)):
+                if tname not in mapping or tname not in current:
+                    continue
+                en_desc = current[tname].get("params", {}).get(pname)
+                if not en_desc:
+                    continue
+                mapping[tname].setdefault("params_en", {})[pname] = en_desc
+                mapping[tname].setdefault("params", {})
+                added += 1
+                break
 
         lib.save_json(lib.CORE_TOOLS, core_tools)
         lib.save_json(lib.PLUGIN_TOOLS, plugin_tools)

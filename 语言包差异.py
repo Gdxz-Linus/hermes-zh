@@ -79,7 +79,7 @@ def write_yaml_flat(path: Path, flat: dict[str, str]) -> None:
     lines: list[str] = []
     _emit(tree, 0, lines)
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
 
 
 def _emit(node: dict, indent: int, lines: list[str]) -> None:
@@ -130,7 +130,7 @@ def main() -> int:
         return 0
 
     print(f"已写入 {lib.LOCALES_DIR}")
-    print("下一步：python 汉化维护.py --deploy")
+    print("下一步：python 部署汉化.py")
     return 0
 
 
