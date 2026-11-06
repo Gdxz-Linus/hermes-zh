@@ -57,7 +57,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.v.outputs.tag }}
-          name: ${{ steps.v.outputs.tag }} — 适配 Hermes ${{ steps.v.outputs.hermes }}
+          name: ${{ steps.v.outputs.tag }}
           body: |
             适配 Hermes Agent **${{ steps.v.outputs.hermes }}**。
 
