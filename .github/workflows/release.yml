@@ -52,6 +52,26 @@ jobs:
           echo "skills=$SKILLS" >> "$GITHUB_OUTPUT"
           echo "提示词 $PROMPTS 段 / 工具 $CORE+$PLUGIN 个 / 语言包 $KEYS 键 / 技能 $SKILLS 个"
 
+      - name: 修正已有 Release 的标题
+        if: steps.check.outputs.exists == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${{ steps.v.outputs.tag }}"
+          ID=$(curl -s -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/releases/tags/$TAG" \
+            | python3 -c "import sys,json;print(json.load(sys.stdin).get('id',''))")
+          if [ -z "$ID" ]; then
+            echo "未找到 $TAG 的 Release，跳过"
+            exit 0
+          fi
+          curl -s -X PATCH -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/releases/$ID" \
+            -d '{"name":""}' > /dev/null
+          echo "已清空 $TAG 的标题，左侧显示为标签名"
+
       - name: 创建 Release
         if: steps.check.outputs.exists == 'false'
         uses: softprops/action-gh-release@v2
