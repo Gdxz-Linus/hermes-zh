@@ -88,6 +88,7 @@ PROMPT_MODULES = (
     "system_prompt",
     "coding_context",
     "context_compressor",
+    "context_compressor_prompt_rules",
     "background_review",
     "curator",
 )

@@ -1,63 +1,57 @@
-# 用户层语言包覆盖文件
-#
-# 本文件由 extract_locale_diff.py 生成，来源 zh-hant.tui.yaml
-# 只收录本地清洗过、与仓库官方版不同的键。
-# 未收录的键自动走仓库版；官方升级新增的键无需在此维护。
-#
 billing:
   autoReload:
-    aDifferentCard: 另一張銀行卡
-    cardOnFile: 已儲存的銀行卡：{0}
-    distinctCardWarning: ⚠ 自動儲值將從 {0} 扣款 — 不是你已儲存的銀行卡。
-    manageCardOnPortal: 使用你已儲存的銀行卡 — 在入口網站管理
-    noCardManageOnPortal: 🔴 尚未儲存任何銀行卡 — 請在入口網站管理帳務。
-    yourCard: 你的銀行卡
+    aDifferentCard: "另一張銀行卡"
+    cardOnFile: "已儲存的銀行卡：{0}"
+    distinctCardWarning: "⚠ 自動儲值將從 {0} 扣款 — 不是你已儲存的銀行卡。"
+    manageCardOnPortal: "使用你已儲存的銀行卡 — 在入口網站管理"
+    noCardManageOnPortal: "🔴 尚未儲存任何銀行卡 — 請在入口網站管理帳務。"
+    yourCard: "你的銀行卡"
   buy:
-    addCardOnPortal: 在入口網站新增銀行卡
-    addCardOnce: 只需在入口網站的帳務頁面新增銀行卡一次 — 之後就能直接在終端機儲值。
-    addCardThenCheckAgain: 請在帳務頁面新增銀行卡，然後回到這裡選擇「再檢查一次」。
-    cardFound: ✓ 找到銀行卡：{0} — 請選擇金額。
-    checkingForCard: 正在檢查銀行卡…
-    noSavedCardLine: 尚未儲存任何銀行卡。
-    stillNoCard: 仍然沒有銀行卡 — 請在入口網站完成新增，然後再檢查一次。
+    addCardOnPortal: "在入口網站新增銀行卡"
+    addCardOnce: "只需在入口網站的帳務頁面新增銀行卡一次 — 之後就能直接在終端機儲值。"
+    addCardThenCheckAgain: "請在帳務頁面新增銀行卡，然後回到這裡選擇「再檢查一次」。"
+    cardFound: "✓ 找到銀行卡：{0} — 請選擇金額。"
+    checkingForCard: "正在檢查銀行卡…"
+    noSavedCardLine: "尚未儲存任何銀行卡。"
+    stillNoCard: "仍然沒有銀行卡 — 請在入口網站完成新增，然後再檢查一次。"
   common:
-    noSavedCard: 尚未儲存任何銀行卡
+    noSavedCard: "尚未儲存任何銀行卡"
   confirm:
-    authorization: 確認即表示你允許 Nous Research 從你的銀行卡扣款。
-    portalCardCharged: 將從你儲存在入口網站的銀行卡扣款。
+    authorization: "確認即表示你允許 Nous Research 從你的銀行卡扣款。"
+    portalCardCharged: "將從你儲存在入口網站的銀行卡扣款。"
   overview:
-    card: 銀行卡：{0}
-    noCardHint: 尚未儲存任何銀行卡 — 「加值」會引導你新增一張。
+    card: "銀行卡：{0}"
+    noCardHint: "尚未儲存任何銀行卡 — 「加值」會引導你新增一張。"
   stepUp:
-    notAllowed: '! 無法允許遠端消費 — 必須由具備帳務權限的人（擁有者、管理員或財務管理員）批准。你的銀行卡未被扣款。'
-    stillNeedsApproval: '! 遠端消費仍需批准 — 執行 /topup 再試一次。你的銀行卡未被扣款。'
+    notAllowed: "! 無法允許遠端消費 — 必須由具備帳務權限的人（擁有者、管理員或財務管理員）批准。你的銀行卡未被扣款。"
+    stillNeedsApproval: "! 遠端消費仍需批准 — 執行 /topup 再試一次。你的銀行卡未被扣款。"
 hubs:
   agents:
     section:
-      budget: 用量
+      budget: "用量"
 slashCmd:
   ops:
     browser:
-      modeBrowserUse: 瀏覽器：Browser Use 模式（透過 Browser Use CLI 3.0 使用 browser_exec）
-      newSessionsOnly: 適用於新的工作階段 — 目前的工作階段保留現有工具（使用 /new 開始新的）
-      usage: 用法：/browser [connect|disconnect|status|use] [url] · 永久設定：在 config.yaml 中設定 browser.cdp_url
-      useDisabled: 已停用 Browser Use 模式 — 已還原內建瀏覽器工具
-      useEnabled: 已啟用 Browser Use 模式 — 透過 Browser Use CLI 3.0 使用 browser_exec
-      useUsage: 用法：/browser use [off]
+      modeBrowserUse: "瀏覽器：Browser Use 模式（透過 Browser Use CLI 3.0 使用 browser_exec）"
+      newSessionsOnly: "適用於新的工作階段 — 目前的工作階段保留現有工具（使用 /new 開始新的）"
+      usage: "用法：/browser [connect|disconnect|status|use] [url] · 永久設定：在 config.yaml 中設定 browser.cdp_url"
+      useDisabled: "已停用 Browser Use 模式 — 已還原內建瀏覽器工具"
+      useEnabled: "已啟用 Browser Use 模式 — 透過 Browser Use CLI 3.0 使用 browser_exec"
+      useUsage: "用法：/browser use [off]"
   topup:
     charge:
-      cardDeclined: 🔴 你的銀行卡被拒絕。請在入口網站改用其他卡。
-      paymentMethodExpired: 🔴 你的銀行卡已過期。請在入口網站更新。
+      cardDeclined: "🔴 你的銀行卡被拒絕。請在入口網站改用其他卡。"
+      paymentMethodExpired: "🔴 你的銀行卡已過期。請在入口網站更新。"
     error:
-      autoTopUpDisabledFailures: 由於扣款連續失敗，自動儲值已被關閉。請先解決銀行卡問題，再從 /topup → 自動儲值 重新啟用。
-      consentRequired: 此操作需要先在入口網站完成一次性的銀行卡確認與同意步驟，才能繼續。
-      noPaymentMethod: 💳 尚未儲存可供終端機扣款的銀行卡。請在入口網站設定一張（一次性購買額度不會儲存可重複使用的銀行卡）。
+      autoTopUpDisabledFailures: "由於扣款連續失敗，自動儲值已被關閉。請先解決銀行卡問題，再從 /topup → 自動儲值 重新啟用。"
+      consentRequired: "此操作需要先在入口網站完成一次性的銀行卡確認與同意步驟，才能繼續。"
+      noPaymentMethod: "💳 尚未儲存可供終端機扣款的銀行卡。請在入口網站設定一張（一次性購買額度不會儲存可重複使用的銀行卡）。"
 subscription:
   confirm:
-    cardCharged: 將從 {0}（你訂閱綁定的銀行卡）扣款。
-    cardChargedGeneric: 將從你訂閱綁定的銀行卡扣款。
+    cardCharged: "將從 {0}（你訂閱綁定的銀行卡）扣款。"
+    cardChargedGeneric: "將從你訂閱綁定的銀行卡扣款。"
   result:
-    cardDeclinedTryDifferent: 你的銀行卡遭拒 — 請到入口網站改用其他卡。
-    paymentFailed: 你的銀行卡遭拒。請到入口網站更新付款方式後再試。
-    upgradeUnconfirmed: 無法確認升級結果 — 你的銀行卡可能已扣款，也可能未扣款。再試之前，請重新執行 /subscription 確認你的方案。
-    verifyCard: 請到入口網站驗證你的銀行卡，以完成此次升級。
+    cardDeclinedTryDifferent: "你的銀行卡遭拒 — 請到入口網站改用其他卡。"
+    paymentFailed: "你的銀行卡遭拒。請到入口網站更新付款方式後再試。"
+    upgradeUnconfirmed: "無法確認升級結果 — 你的銀行卡可能已扣款，也可能未扣款。再試之前，請重新執行 /subscription 確認你的方案。"
+    verifyCard: "請到入口網站驗證你的銀行卡，以完成此次升級。"

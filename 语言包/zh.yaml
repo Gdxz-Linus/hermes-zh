@@ -1,91 +1,97 @@
-# 用户层语言包覆盖文件
-#
-# 本文件由 extract_locale_diff.py 生成，来源 zh.yaml
-# 只收录本地清洗过、与仓库官方版不同的键。
-# 未收录的键自动走仓库版；官方升级新增的键无需在此维护。
-#
 gateway:
   compress:
-    summary_failed: ⚠️ 摘要生成失败（{error}）。{count} 条历史消息已被移除并替换为简短提示；之前的上下文已无法恢复。建议检查 auxiliary.compression 模型配置。
+    summary_failed: "⚠️ 摘要生成失败（{error}）。{count} 条历史消息已被移除并替换为简短提示；之前的上下文已无法恢复。建议检查 auxiliary.compression 模型配置。"
   goal:
     set: "⊙ 目标已设置（最多 {budget} 轮）：{goal}\n我将持续工作直到目标完成、你暂停或清除它，或轮次用尽。\n控制命令：/goal status · /goal pause · /goal resume · /goal clear"
   kanban:
     wake:
       review_detail: "评审反馈: {reason}\n请检查现有任务及其当前评审运行；将工作返回同一实现任务。不要把此 BLOCK 视为批准，也不要创建重复任务。"
   hooks:
-    command_blocked: 命令 `/{command}` 已被插件拦截。
+    command_blocked: "命令 `/{command}` 已被插件拦截。"
 slash:
   btw:
-    description: 就当前对话附带提问，不打断进行中的工作
+    description: "就当前对话附带提问，不打断进行中的工作"
   memory:
-    description: 审阅待写入的记忆 / 开关审批
+    description: "审阅待写入的记忆 / 开关审批"
   browser:
-    description: 通过 CDP 将浏览器工具接入你正在运行的 Chromium 系浏览器，或切换到 Browser Use 模式
+    description: "通过 CDP 将浏览器工具接入你正在运行的 Chromium 系浏览器，或切换到 Browser Use 模式"
+  rewind:
+    description: "回溯到之前的提示以编辑并重新发送，或从该处分叉（Esc Esc）"
 cli:
   model:
-    normalized_copilot_model: 已将 Copilot 模型 '{old}' 规范化为 '{new}'。
+    normalized_copilot_model: "已将 Copilot 模型 '{old}' 规范化为 '{new}'。"
   plugins:
-    count_noun_hooks: 个扩展点
+    count_noun_hooks: "个扩展点"
   resume:
-    kanban_owned: ⛔ 会话 {session_id} 是 Kanban 工作线程的记录。在此恢复会创建一个 Kanban 看板无法观察或监督的写入者——请改为在看板上重试或解除任务的受阻状态，让调度器拥有下一次运行。
+    kanban_owned: "⛔ 会话 {session_id} 是 Kanban 工作线程的记录。在此恢复会创建一个 Kanban 看板无法观察或监督的写入者——请改为在看板上重试或解除任务的受阻状态，让调度器拥有下一次运行。"
   chat:
-    iteration_budget_reached: ⚠ 已达迭代上限（{used}/{max}）——回复可能不完整
+    iteration_budget_reached: "⚠ 已达迭代上限（{used}/{max}）——回复可能不完整"
   commands:
     browser:
-      use_usage: 用法：/browser use [off]
-      use_on_hint: /browser use       — 切换到 Browser Use 模式（通过 CLI 3.0 使用 browser_exec）
-      use_off_hint: /browser use off   — 恢复为内置浏览器工具
-      use_enabled: 🌐 已启用 Browser Use 模式——通过 Browser Use CLI 3.0 使用 browser_exec
-      use_disabled: 🌐 已禁用 Browser Use 模式——已恢复内置浏览器工具
-      session_reset: 会话已重置。新的工具配置已生效。
-      reverted: 浏览器工具已恢复为默认模式（本地后台浏览器或云端提供方）
-      status_lightpanda: 🌐 浏览器：本地 Lightpanda（agent-browser --engine lightpanda）
-      status_lightpanda_fallback: 截图和失败的命令会自动回退到 Chromium
-      status_chrome: 🌐 浏览器：本地后台运行的 Chromium（agent-browser --engine chrome）
-      status_auto: 🌐 浏览器：本地后台运行的 Chromium（agent-browser）
-      status_browser_use: 🌐 浏览器：Browser Use 模式（通过 Browser Use CLI 3.0 使用 browser_exec）
-      status_browser_use_note: 通过 CDP 使用本地 Chrome，或使用 Browser Use 云端浏览器
-      status_use_off_hint: /browser use off      — 恢复为内置浏览器工具
-      usage: 用法：/browser connect|disconnect|status|use
-      usage_use: use [off]    切换到 Browser Use 模式（CLI 3.0）/ 切回内置工具
-      new_sessions_only: 应用于新会话 — 此会话保留当前工具（/new 开始新的）。
+      use_usage: "用法：/browser use [off]"
+      use_on_hint: "/browser use       — 切换到 Browser Use 模式（通过 CLI 3.0 使用 browser_exec）"
+      use_off_hint: "/browser use off   — 恢复为内置浏览器工具"
+      use_enabled: "🌐 已启用 Browser Use 模式——通过 Browser Use CLI 3.0 使用 browser_exec"
+      use_disabled: "🌐 已禁用 Browser Use 模式——已恢复内置浏览器工具"
+      session_reset: "会话已重置。新的工具配置已生效。"
+      reverted: "浏览器工具已恢复为默认模式（本地后台浏览器或云端提供方）"
+      status_lightpanda: "🌐 浏览器：本地 Lightpanda（agent-browser --engine lightpanda）"
+      status_lightpanda_fallback: "截图和失败的命令会自动回退到 Chromium"
+      status_chrome: "🌐 浏览器：本地后台运行的 Chromium（agent-browser --engine chrome）"
+      status_auto: "🌐 浏览器：本地后台运行的 Chromium（agent-browser）"
+      status_browser_use: "🌐 浏览器：Browser Use 模式（通过 Browser Use CLI 3.0 使用 browser_exec）"
+      status_browser_use_note: "通过 CDP 使用本地 Chrome，或使用 Browser Use 云端浏览器"
+      status_use_off_hint: "/browser use off      — 恢复为内置浏览器工具"
+      usage: "用法：/browser connect|disconnect|status|use"
+      usage_use: "use [off]    切换到 Browser Use 模式（CLI 3.0）/ 切回内置工具"
+      new_sessions_only: "应用于新会话 — 此会话保留当前工具（/new 开始新的）。"
   banner:
-    hermes_models_lack_tools: 它们缺少智能体任务所需的工具调用能力。建议使用代理型模型（Claude、GPT、Gemini、DeepSeek 等）。
+    hermes_models_lack_tools: "它们缺少智能体任务所需的工具调用能力。建议使用代理型模型（Claude、GPT、Gemini、DeepSeek 等）。"
+  backtrack:
+    preview_label: "提示 {number} / {total}："
+    more_lines: "…（还有 {count} 行）"
+    edit_cancelled: "↺ 已取消回溯；未删除任何内容。"
+    rewound: "↺ 已回溯到提示 {number}（已归档 {count} 条消息）；正在发送编辑内容。"
+    forked: "⑂ 已在提示 {number} 之前分叉；原始会话 {parent} 未改变。请编辑下方提示，然后按 Enter 发送。"
+    target_changed: "(x_x) 自你选择提示 {number} 后会话已变化；未删除任何内容。你的编辑已放回输入框。"
+    usage: "用法：/rewind [N | fork N]"
+    rewind_failed: "(x_x) 回溯失败；历史记录未改变：{error}"
+    ctx_fallback: " 默认值"
 display:
   review:
     label:
-      user: 用户档案
-    summary_cli: '  💾 自我改进：{summary}'
-    summary_callback: 💾 自我改进：{summary}
-    aux_failure_label: 背景资料
+      user: "用户档案"
+    summary_cli: "  💾 自我改进：{summary}"
+    summary_callback: "💾 自我改进：{summary}"
+    aux_failure_label: "背景资料"
 explainer:
   exit:
-    budget_exhausted: 在给出最终答案之前，本回合的迭代次数或成本额度已用尽。发送 `continue` 继续。
+    budget_exhausted: "在给出最终答案之前，本回合的迭代次数或成本额度已用尽。发送 `continue` 继续。"
   file_mutation:
-    header: ⚠️ 文件修改校验器：本回合有 {count} 处文件编辑失败，无论上方措辞如何暗示。请运行 `git status` 或 `read_file` 确认实际写入的内容。
+    header: "⚠️ 文件修改校验器：本回合有 {count} 处文件编辑失败，无论上方措辞如何暗示。请运行 `git status` 或 `read_file` 确认实际写入的内容。"
 tips:
-  t049: hermes -w 创建一个隔离的 git worktree——非常适合并行运行的多个智能体。
-  t072: hermes mcp serve 把 Hermes 本身作为 MCP 服务器运行，供其他代理使用。
-  t098: '设置 browser.record_sessions: true，自动把浏览器会话录制为 WebM 视频。'
-  t114: read_file 自动去重——重新读取未更改的文件只会返回一段简短说明，不再重复内容。
-  t115: browser_vision 截取屏幕截图并用 AI 分析——对验证码和视觉内容同样有效。
-  t116: browser_console 可在页面上下文中执行 JavaScript 表达式。
-  t138: 代理有两个记忆存储：个人笔记（约 2200 字符）和用户档案（约 1375 字符）。
-  t180: 五种浏览器提供方：本地 Chromium、Browserbase、Browser Use、Camofox 和 Firecrawl。
-  t181: Camofox 是一款反检测浏览器——基于 Firefox 分支，采用 C++ 指纹伪装。
-  t182: browser_navigate 会自动返回页面快照——无需再调用 browser_snapshot。
-  t183: browser_vision 配合 annotate=true 会在可交互元素上叠加编号标签。
-  t198: 插件有三种类型：通用插件（工具与扩展点）、记忆提供方和上下文引擎。
-  t201: 插件扩展点包括 pre/post_tool_call、pre/post_llm_call，以及用于规范化输出的 transform_terminal_output。
-  t221: /compress <focus topic> 会把 60-70% 的摘要篇幅分配给你指定的主题，并大幅精简其余内容。
-  t224: '在 config.yaml 中设置 network.force_ipv4: true 可修复 IPv6 损坏的服务器上的无响应问题——通过给 socket 打补丁实现。'
-  t262: 超过 15,000 字符的浏览器页面快照会被截断或自动摘要；完整快照保存在 cache/web 下，可用 read_file 分页读取。
-  t263: 压缩器会先做一次低成本预处理：在大模型运行之前，超过 200 字符的工具输出会被替换为简短标记。
-  t275: hermes claw migrate --dry-run 预览 OpenClaw 迁移结果，不会写入任何内容。
-  t281: 配置中的 MCP ${ENV_VAR} 变量引用会在服务器启动时替换为实际值——包括来自 ~/.hermes/.env 的变量。
-  t300: 网关事件回调位于 ~/.hermes/hooks/<name>/，包含 HOOK.yaml 和 handler.py——处理函数必须命名为 `handle`。
-  t301: 可订阅的事件包括 gateway:startup、session:start、agent:step，以及 command:* 通配订阅。
-  t302: 放一份 ~/.hermes/BOOT.md 清单，再订阅 gateway:startup 事件，每次启动都会以一次性代理执行它。
-  t324: HERMES_ACCEPT_HOOKS 自动批准 config.yaml 中声明的、此前未见过的 shell 回调脚本，无需在终端确认。
-  t328: 'tts.providers.<name>.type: command 可接入任何命令行 TTS 引擎，使用 {input_path} 和 {output_path} 两个变量。'
-  t360: HERMES_ENABLE_PROJECT_PLUGINS=1 自动加载 ./.hermes/plugins/ 下的仓库本地插件——设计上有信任校验。
+  t049: "hermes -w 创建一个隔离的 git worktree——非常适合并行运行的多个智能体。"
+  t072: "hermes mcp serve 把 Hermes 本身作为 MCP 服务器运行，供其他代理使用。"
+  t098: "设置 browser.record_sessions: true，自动把浏览器会话录制为 WebM 视频。"
+  t114: "read_file 自动去重——重新读取未更改的文件只会返回一段简短说明，不再重复内容。"
+  t115: "browser_vision 截取屏幕截图并用 AI 分析——对验证码和视觉内容同样有效。"
+  t116: "browser_console 可在页面上下文中执行 JavaScript 表达式。"
+  t138: "代理有两个记忆存储：个人笔记（约 2200 字符）和用户档案（约 1375 字符）。"
+  t180: "五种浏览器提供方：本地 Chromium、Browserbase、Browser Use、Camofox 和 Firecrawl。"
+  t181: "Camofox 是一款反检测浏览器——基于 Firefox 分支，采用 C++ 指纹伪装。"
+  t182: "browser_navigate 会自动返回页面快照——无需再调用 browser_snapshot。"
+  t183: "browser_vision 配合 annotate=true 会在可交互元素上叠加编号标签。"
+  t198: "插件有三种类型：通用插件（工具与扩展点）、记忆提供方和上下文引擎。"
+  t201: "插件扩展点包括 pre/post_tool_call、pre/post_llm_call，以及用于规范化输出的 transform_terminal_output。"
+  t221: "/compress <focus topic> 会把 60-70% 的摘要篇幅分配给你指定的主题，并大幅精简其余内容。"
+  t224: "在 config.yaml 中设置 network.force_ipv4: true 可修复 IPv6 损坏的服务器上的无响应问题——通过给 socket 打补丁实现。"
+  t262: "超过 15,000 字符的浏览器页面快照会被截断或自动摘要；完整快照保存在 cache/web 下，可用 read_file 分页读取。"
+  t263: "压缩器会先做一次低成本预处理：在大模型运行之前，超过 200 字符的工具输出会被替换为简短标记。"
+  t275: "hermes claw migrate --dry-run 预览 OpenClaw 迁移结果，不会写入任何内容。"
+  t281: "配置中的 MCP ${ENV_VAR} 变量引用会在服务器启动时替换为实际值——包括来自 ~/.hermes/.env 的变量。"
+  t300: "网关事件回调位于 ~/.hermes/hooks/<name>/，包含 HOOK.yaml 和 handler.py——处理函数必须命名为 `handle`。"
+  t301: "可订阅的事件包括 gateway:startup、session:start、agent:step，以及 command:* 通配订阅。"
+  t302: "放一份 ~/.hermes/BOOT.md 清单，再订阅 gateway:startup 事件，每次启动都会以一次性代理执行它。"
+  t324: "HERMES_ACCEPT_HOOKS 自动批准 config.yaml 中声明的、此前未见过的 shell 回调脚本，无需在终端确认。"
+  t328: "tts.providers.<name>.type: command 可接入任何命令行 TTS 引擎，使用 {input_path} 和 {output_path} 两个变量。"
+  t360: "HERMES_ENABLE_PROJECT_PLUGINS=1 自动加载 ./.hermes/plugins/ 下的仓库本地插件——设计上有信任校验。"

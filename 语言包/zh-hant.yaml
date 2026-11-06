@@ -1,86 +1,80 @@
-# 用户层语言包覆盖文件
-#
-# 本文件由 extract_locale_diff.py 生成，来源 zh-hant.yaml
-# 只收录本地清洗过、与仓库官方版不同的键。
-# 未收录的键自动走仓库版；官方升级新增的键无需在此维护。
-#
 gateway:
   compress:
-    summary_failed: ⚠️ 摘要產生失敗（{error}）。{count} 則歷史訊息已被移除並以簡短提示取代；先前的上下文已無法復原。建議檢查 auxiliary.compression 模型設定。
+    summary_failed: "⚠️ 摘要產生失敗（{error}）。{count} 則歷史訊息已被移除並以簡短提示取代；先前的上下文已無法復原。建議檢查 auxiliary.compression 模型設定。"
   goal:
     set: "⊙ 目標已設定（最多 {budget} 輪）：{goal}\n我會持續工作直到目標完成、你暫停或清除它，或輪次用盡。\n控制指令：/goal status · /goal pause · /goal resume · /goal clear"
 slash:
   browser:
-    description: 透過 CDP 將瀏覽器工具連接到你正在使用的 Chromium 系瀏覽器，或切換為 Browser Use 模式
+    description: "透過 CDP 將瀏覽器工具連接到你正在使用的 Chromium 系瀏覽器，或切換為 Browser Use 模式"
 cli:
   billing:
-    card_line: 銀行卡：{card}
-    no_saved_card_add_funds_hint: 尚未儲存任何銀行卡 — 「儲值」會引導你新增一張。
-    refill_when_low_generic: 餘額不足時補充 — 當餘額低於你設定的金額時，自動從你的銀行卡扣款。
-    add_card_first: 請先新增銀行卡
-    add_card_title: 新增銀行卡
-    no_saved_card: 尚未儲存任何銀行卡。
-    no_saved_card_short: 尚未儲存任何銀行卡
-    no_saved_card_lower: 沒有已儲存的銀行卡
-    add_card_once_hint: 只需在 Portal 帳務頁面新增銀行卡一次 — 之後就能直接在終端機儲值。
-    add_card_then_recheck: 請在帳務頁面新增銀行卡，然後在這裡選擇「重新檢查」。
-    card_found_continuing: 找到銀行卡：{card} — 繼續進行。
-    still_no_card: 仍然沒有銀行卡 — 請在 Portal 完成新增，然後再檢查一次。
-    choice_add_card_on_portal: 在 Portal 新增銀行卡
-    desc_recheck_card: 重新檢查銀行卡並繼續
-    portal_card_will_be_charged: 將從你儲存在 Portal 的銀行卡扣款。
-    consent_charge: 確認即表示你允許 Nous Research 從你的銀行卡扣款。
-    desc_manage_card_billing: 在瀏覽器管理你的銀行卡／帳務
-    charge_failed_payment_method_expired: 🔴 你的銀行卡已過期。請在 Portal 更新。
-    charge_failed_card_declined: 🔴 你的銀行卡被拒絕。請在 Portal 改用其他卡。
-    charge_error_no_payment_method: 💳 沒有銀行卡 — 請在 Portal 儲值並管理帳務。
-    charge_stepup_not_granted: 無法允許遠端消費 — 必須由組織管理員或擁有者批准。你的銀行卡未被扣款。
-    allowed_no_card: 已允許遠端消費 — 但目前還沒有銀行卡。
-    card_on_file: 已儲存的銀行卡：{card}
-    no_saved_card_manage_portal: 尚未儲存任何銀行卡 — 請在 Portal 管理帳務。
+    card_line: "銀行卡：{card}"
+    no_saved_card_add_funds_hint: "尚未儲存任何銀行卡 — 「儲值」會引導你新增一張。"
+    refill_when_low_generic: "餘額不足時補充 — 當餘額低於你設定的金額時，自動從你的銀行卡扣款。"
+    add_card_first: "請先新增銀行卡"
+    add_card_title: "新增銀行卡"
+    no_saved_card: "尚未儲存任何銀行卡。"
+    no_saved_card_short: "尚未儲存任何銀行卡"
+    no_saved_card_lower: "沒有已儲存的銀行卡"
+    add_card_once_hint: "只需在 Portal 帳務頁面新增銀行卡一次 — 之後就能直接在終端機儲值。"
+    add_card_then_recheck: "請在帳務頁面新增銀行卡，然後在這裡選擇「重新檢查」。"
+    card_found_continuing: "找到銀行卡：{card} — 繼續進行。"
+    still_no_card: "仍然沒有銀行卡 — 請在 Portal 完成新增，然後再檢查一次。"
+    choice_add_card_on_portal: "在 Portal 新增銀行卡"
+    desc_recheck_card: "重新檢查銀行卡並繼續"
+    portal_card_will_be_charged: "將從你儲存在 Portal 的銀行卡扣款。"
+    consent_charge: "確認即表示你允許 Nous Research 從你的銀行卡扣款。"
+    desc_manage_card_billing: "在瀏覽器管理你的銀行卡／帳務"
+    charge_failed_payment_method_expired: "🔴 你的銀行卡已過期。請在 Portal 更新。"
+    charge_failed_card_declined: "🔴 你的銀行卡被拒絕。請在 Portal 改用其他卡。"
+    charge_error_no_payment_method: "💳 沒有銀行卡 — 請在 Portal 儲值並管理帳務。"
+    charge_stepup_not_granted: "無法允許遠端消費 — 必須由組織管理員或擁有者批准。你的銀行卡未被扣款。"
+    allowed_no_card: "已允許遠端消費 — 但目前還沒有銀行卡。"
+    card_on_file: "已儲存的銀行卡：{card}"
+    no_saved_card_manage_portal: "尚未儲存任何銀行卡 — 請在 Portal 管理帳務。"
   model:
-    normalized_copilot_model: 已將 Copilot 模型 '{old}' 正規化為 '{new}'。
+    normalized_copilot_model: "已將 Copilot 模型 '{old}' 正規化為 '{new}'。"
   resume:
-    kanban_owned: ⛔ 工作階段 {session_id} 是 Kanban 工作執行緒的記錄。在此恢復會建立一個 Kanban 看板無法觀察或監督的寫入者——請改為在看板上重試或解除任務的受阻狀態，讓調度器擁有下一次執行。
+    kanban_owned: "⛔ 工作階段 {session_id} 是 Kanban 工作執行緒的記錄。在此恢復會建立一個 Kanban 看板無法觀察或監督的寫入者——請改為在看板上重試或解除任務的受阻狀態，讓調度器擁有下一次執行。"
   commands:
     browser:
-      use_usage: 用法：/browser use [off]
-      use_on_hint: /browser use       — 切換至 Browser Use 模式（透過 CLI 3.0 使用 browser_exec）
-      use_off_hint: /browser use off   — 還原為內建瀏覽器工具
-      use_enabled: 🌐 已啟用 Browser Use 模式 — 透過 Browser Use CLI 3.0 使用 browser_exec
-      use_disabled: 🌐 已停用 Browser Use 模式 — 已還原內建瀏覽器工具
-      session_reset: 工作階段已重設。新的工具設定已生效。
-      reverted: 瀏覽器工具已還原為預設模式（本機背景執行或雲端提供方）
-      status_lightpanda: 🌐 瀏覽器：本機 Lightpanda（agent-browser --engine lightpanda）
-      status_lightpanda_fallback: 螢幕截圖與失敗的指令會自動改用 Chromium
-      status_chrome: 🌐 瀏覽器：本機背景執行的 Chromium（agent-browser --engine chrome）
-      status_auto: 🌐 瀏覽器：本機背景執行的 Chromium（agent-browser）
-      status_browser_use: 🌐 瀏覽器：Browser Use 模式（透過 Browser Use CLI 3.0 使用 browser_exec）
-      status_browser_use_note: 透過 CDP 使用本機 Chrome，或使用 Browser Use 雲端瀏覽器
-      status_use_off_hint: /browser use off      — 還原為內建瀏覽器工具
-      usage: 用法：/browser connect|disconnect|status|use
-      usage_use: use [off]    切換至 Browser Use 模式（CLI 3.0）／切回內建工具
-      new_sessions_only: 套用於新工作階段 — 此工作階段保留目前工具（/new 開始新的）。
+      use_usage: "用法：/browser use [off]"
+      use_on_hint: "/browser use       — 切換至 Browser Use 模式（透過 CLI 3.0 使用 browser_exec）"
+      use_off_hint: "/browser use off   — 還原為內建瀏覽器工具"
+      use_enabled: "🌐 已啟用 Browser Use 模式 — 透過 Browser Use CLI 3.0 使用 browser_exec"
+      use_disabled: "🌐 已停用 Browser Use 模式 — 已還原內建瀏覽器工具"
+      session_reset: "工作階段已重設。新的工具設定已生效。"
+      reverted: "瀏覽器工具已還原為預設模式（本機背景執行或雲端提供方）"
+      status_lightpanda: "🌐 瀏覽器：本機 Lightpanda（agent-browser --engine lightpanda）"
+      status_lightpanda_fallback: "螢幕截圖與失敗的指令會自動改用 Chromium"
+      status_chrome: "🌐 瀏覽器：本機背景執行的 Chromium（agent-browser --engine chrome）"
+      status_auto: "🌐 瀏覽器：本機背景執行的 Chromium（agent-browser）"
+      status_browser_use: "🌐 瀏覽器：Browser Use 模式（透過 Browser Use CLI 3.0 使用 browser_exec）"
+      status_browser_use_note: "透過 CDP 使用本機 Chrome，或使用 Browser Use 雲端瀏覽器"
+      status_use_off_hint: "/browser use off      — 還原為內建瀏覽器工具"
+      usage: "用法：/browser connect|disconnect|status|use"
+      usage_use: "use [off]    切換至 Browser Use 模式（CLI 3.0）／切回內建工具"
+      new_sessions_only: "套用於新工作階段 — 此工作階段保留目前工具（/new 開始新的）。"
 display:
   review:
-    summary_cli: '  💾 自我改進：{summary}'
-    summary_callback: 💾 自我改進：{summary}
-    aux_failure_label: 背景資料
+    summary_cli: "  💾 自我改進：{summary}"
+    summary_callback: "💾 自我改進：{summary}"
+    aux_failure_label: "背景資料"
 explainer:
   exit:
-    budget_exhausted: 在給出最終答案之前，本回合的迭代次數或成本額度已用盡。傳送 `continue` 繼續。
+    budget_exhausted: "在給出最終答案之前，本回合的迭代次數或成本額度已用盡。傳送 `continue` 繼續。"
 tips:
-  t072: hermes mcp serve 會將 Hermes 本身作為 MCP 伺服器執行，供其他代理使用。
-  t098: '設定 browser.record_sessions: true 可自動將瀏覽器工作階段錄製為 WebM 影片。'
-  t115: browser_vision 會擷取螢幕截圖並用 AI 分析 — 適用於 CAPTCHA 與視覺內容。
-  t116: browser_console 可在頁面上下文中評估 JavaScript 表達式。
-  t180: 五種瀏覽器提供方：本機 Chromium、Browserbase、Browser Use、Camofox 與 Firecrawl。
-  t181: Camofox 是反偵測瀏覽器 — 以 Firefox 分支為基礎，用 C++ 偽裝指紋。
-  t182: browser_navigate 會自動回傳頁面快照 — 之後不必再呼叫 browser_snapshot。
-  t183: browser_vision 搭配 annotate=true 會在互動元素上疊加編號標籤。
-  t221: /compress <focus topic> 會把 60-70% 的摘要篇幅分配給你指定的主題，並大幅精簡其餘內容。
-  t262: 超過 15,000 字元的瀏覽器頁面快照會被截斷或自動摘要；完整快照會儲存到 cache/web，可用 read_file 分頁讀取。
-  t263: 壓縮器會先做一次低成本的預處理：超過 200 字元的工具輸出會在大模型執行前先替換為簡短標記。
-  t275: hermes claw migrate --dry-run 可預覽 OpenClaw 遷移，而不會寫入任何內容。
-  t281: 設定中的 MCP ${ENV_VAR} 變數引用會在伺服器啟動時替換為實際值 — 包含來自 ~/.hermes/.env 的變數。
-  t328: 'tts.providers.<name>.type: command 可透過 {input_path} 與 {output_path} 兩個變數接上任何 CLI TTS 引擎。'
+  t072: "hermes mcp serve 會將 Hermes 本身作為 MCP 伺服器執行，供其他代理使用。"
+  t098: "設定 browser.record_sessions: true 可自動將瀏覽器工作階段錄製為 WebM 影片。"
+  t115: "browser_vision 會擷取螢幕截圖並用 AI 分析 — 適用於 CAPTCHA 與視覺內容。"
+  t116: "browser_console 可在頁面上下文中評估 JavaScript 表達式。"
+  t180: "五種瀏覽器提供方：本機 Chromium、Browserbase、Browser Use、Camofox 與 Firecrawl。"
+  t181: "Camofox 是反偵測瀏覽器 — 以 Firefox 分支為基礎，用 C++ 偽裝指紋。"
+  t182: "browser_navigate 會自動回傳頁面快照 — 之後不必再呼叫 browser_snapshot。"
+  t183: "browser_vision 搭配 annotate=true 會在互動元素上疊加編號標籤。"
+  t221: "/compress <focus topic> 會把 60-70% 的摘要篇幅分配給你指定的主題，並大幅精簡其餘內容。"
+  t262: "超過 15,000 字元的瀏覽器頁面快照會被截斷或自動摘要；完整快照會儲存到 cache/web，可用 read_file 分頁讀取。"
+  t263: "壓縮器會先做一次低成本的預處理：超過 200 字元的工具輸出會在大模型執行前先替換為簡短標記。"
+  t275: "hermes claw migrate --dry-run 可預覽 OpenClaw 遷移，而不會寫入任何內容。"
+  t281: "設定中的 MCP ${ENV_VAR} 變數引用會在伺服器啟動時替換為實際值 — 包含來自 ~/.hermes/.env 的變數。"
+  t328: "tts.providers.<name>.type: command 可透過 {input_path} 與 {output_path} 兩個變數接上任何 CLI TTS 引擎。"

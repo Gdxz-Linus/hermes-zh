@@ -82,7 +82,7 @@
       "action": "取值之一：create、list、update、pause、resume、remove、run、cancel。action=create 时 'schedule' 与 'prompt' 字段必填。",
       "job_id": "update、pause、resume、remove、run、cancel 时必填。",
       "pinned": "用于创建或修改定时任务。仅当用户明确要求将任务固定（或解除固定）到特定模型时设置。设为 true 会将当前智能体主模型及其提供商锁定到该任务上，后续更换模型不会影响该任务；设为 false 解除锁定，任务继续跟随主模型。严禁擅自主动设置：默认情况下任务均自动跟随主模型。",
-      "prompt": "创建任务时必填：任务触发时执行的自包含完整提示词正文（与配置的技能一同构成任务指令）。立即运行时：作为单次触发的临时上下文（不持久化保存）。",
+      "prompt": "创建或更新任务时必填：任务触发时执行的自包含完整提示词正文。触发时间写在 'schedule' 里；'自昨天起'这类数据范围写在这里；与配置的技能一同构成任务指令。立即运行时：作为单次触发的临时上下文，不持久化保存。",
       "schedule": "创建任务时必填。时间调度规则，支持五种形式：(1) 周期执行间隔——如 '30m'、'every 2h'、'every hour'；(2) 相对时间单次执行——如 'in 30m'、'in 2h'（适用于“N 分钟后提醒我”，严禁手动计算绝对时间戳）；(3) 自然语言星期与时间——如 'every monday 9am'、'weekdays at 9am'；(4) 标准 5 段式 Cron 表达式——如 '0 9 * * *'（每天早 9 点）；(5) 绝对时间单次执行——ISO 时间戳如 '2026-06-01T09:00:00'。",
       "name": "任务的可选人类可读展示名称。",
       "repeat": "可选的重复执行次数上限。省略时使用默认规则（单次任务执行 1 次，周期循环任务持续运行）。",
@@ -103,7 +103,7 @@
       "action": "One of: create, list, update, pause, resume, remove, run, cancel. When action=create, the 'schedule' and 'prompt' fields are REQUIRED.",
       "job_id": "Required for update/pause/resume/remove/run/cancel.",
       "pinned": "For create/update. ONLY set when the user explicitly asks to pin (or unpin) a job's model. pinned=true locks the CURRENT main agent model (and its provider) onto the job so later `hermes model` / `/model` changes never touch it; pinned=false releases the lock so the job follows the main agent model again. Never set it on your own initiative: by default jobs follow the main model.",
-      "prompt": "For create: the full self-contained prompt (paired with any skills as the task instruction). For run: optional transient context for that single fire (never persisted).",
+      "prompt": "For create/update: the full self-contained prompt (when it runs goes in 'schedule'; data windows like 'since yesterday' stay here; paired with any skills as the task instruction). For run: optional transient context for that single fire (never persisted).",
       "schedule": "REQUIRED for create. Schedule forms: (1) recurring interval — '30m', 'every 2h', 'every hour' (EVERY 30 minutes / 2 hours / hour, forever by default); (2) explicit one-shot by duration — 'in 30m', 'in 2h' (fires ONCE that far from now; use this for 'remind me in N minutes' — do NOT hand-compute an absolute timestamp); (3) natural day/time — 'every monday 9am', 'weekdays at 9am', 'every day at 9am' (recurring weekly/daily); (4) cron syntax — '0 9 * * *' (daily 9am); (5) absolute one-shot — ISO timestamp '2026-06-01T09:00:00'.",
       "name": "Optional human-friendly name",
       "repeat": "Optional repeat count. Omit for defaults (once for one-shot, forever for recurring).",
@@ -576,13 +576,21 @@
     }
   },
   "message_agent": {
-    "en": "Send a message to ANOTHER agent (teammate) on this install, or to an agent on a registered peer gateway. This is FIRE-AND-FORGET and asynchronous, like texting: it validates the target against the live roster, delivers your message into that agent's own Bot Chat with your attribution automatically prefixed, and returns immediately with a dispatch acknowledgement — status queued plus a delivery_id (the hand-off to a background delivery process, not a delivery receipt). It does NOT return their reply and you must not wait or poll for one — send it, finish your turn, and that process's completion notification wakes you with the outcome: their reply, or the delivery failure — unless the ack returns reply_delivery=\"poll\", in which case follow its process(action=\"wait\") instruction before ending the turn. COMPOSE the message yourself: write what YOU want to say to that agent (lead with the point; include the concrete ask or result). Never paste the user's words verbatim — paraphrase the actionable substance, and keep private 1:1 chat content private. Message one clearly relevant teammate when it genuinely helps the user's goal; don't fan out to several agents unless the user explicitly asked. Use the teammate roster in your system prompt (names + roles) to pick the right recipient; targets: a teammate name (e.g. 'researcher'), '<peer>/<agent>' for an agent on a registered peer gateway (e.g. 'spark/researcher', or just '<peer>' for the peer's main agent), or an agent on another connected machine from your roster (use '<handle>@<connection>' if the same handle exists on several).",
-    "description": "向本机上的另一个智能体（协作成员）发送消息，或向已注册的对端网关上的智能体发送消息。本工具发出后即返回、不等待结果，属于异步方式，类似发短信：它会对照当前在线名单校验目标，把你的消息投递到该智能体自己的对话窗口，并自动加上你的署名，随即返回派发确认（状态为已排队，附带 delivery_id，表示已交给后台投递进程，并不代表已经送达）。它不会返回对方的回复，你也不要等待或轮询：发出后结束本轮，后台进程完成时会以通知唤醒你，带来对方回复或投递失败的结果。例外情况是确认信息返回 reply_delivery=\"poll\"，此时须按其中的 process(action=\"wait\") 指示操作后再结束本轮。消息内容由你自己组织：写你想对那个智能体说的话，先说要点，再给具体的请求或结果。不要直接照抄用户原话，应转述其中可执行的实质内容，并保护一对一私聊的隐私。只在确实有助于用户目标时联系一个明确相关的协作成员，用户未明确要求时不要群发给多个智能体。用系统提示中的协作成员名单（名称与职责）挑选收件人。目标写法：协作成员名称（例如 'researcher'）；已注册对端网关上的智能体写作 '<peer>/<agent>'（例如 'spark/researcher'，只写 '<peer>' 表示该对端的主智能体）；名单中另一台已连接机器上的智能体，若同一名称存在于多处，写作 '<handle>@<connection>'。",
+    "en": "Send a message to ANOTHER agent (teammate) on this install, a registered peer gateway, or another connected machine. FIRE-AND-FORGET: it validates the target against the live roster, delivers into that agent's Bot Chat with your attribution prefixed, and returns a dispatch ack at once (status queued + delivery_id: a hand-off, not a receipt). It never returns the reply: finish your turn; the completion notification wakes you with the outcome (its `outcome` line says who answered or why not) — unless the ack says reply_delivery=\"poll\": then follow its process(action=\"wait\") instruction first. COMPOSE the message yourself (lead with the point and the concrete ask); never paste the user's words verbatim or share private 1:1 content. Targets: a roster name ('researcher'), '<peer>/<agent>' or '<peer>' for a peer gateway, '<handle>@<connection>' when a handle exists on several machines.",
+    "description": "向本机上的另一个智能体（协作成员）、已注册的对端网关，或另一台已连接的机器发送消息。发出后立即返回，不等待结果：它会对照当前在线名单校验目标，把你的消息投递到该智能体的对话窗口并自动加上你的署名，随即返回派发确认（状态为已排队，附带 delivery_id，表示已交给投递进程，并不代表对方已收到）。它不会返回对方的回复：发出后结束本轮，后台完成时会以通知唤醒你并带来结果（通知中的 `outcome` 一行说明是谁答复的或为何没有答复）；如果确认信息里 reply_delivery=\"poll\"，则先按其中的 process(action=\"wait\") 指示操作。消息内容须自己撰写，开头即给出要点与具体请求；不要原样粘贴用户的话，也不要泄露私密的一对一内容。目标写法：在线名单里的名字（如 'researcher'）、对端网关用 '<peer>/<agent>' 或 '<peer>'、同一名称存在于多台机器时用 '<handle>@<connection>'。",
     "params": {
-      "target": "消息发往何处：名单中的协作成员名称（'researcher'；'hermes' 表示默认智能体），或已注册对端网关的 '<peer>' / '<peer>/<agent>'。"
+      "target": "消息发往何处：名单中的协作成员名称（'researcher'；'hermes' 表示默认智能体），或已注册对端网关的 '<peer>' / '<peer>/<agent>'。",
+      "constraints": "对方答复必须遵守的限制（范围、长度、格式）。",
+      "expecting": "你需要对方给出的内容；这一项会显示给对方，作为它应当回复你的内容。",
+      "expects_reply": "设为 false 表示只通知：对方不回复，也不会有任何通知唤醒你。",
+      "cancel": "你收到的确认里的 delivery_id：撤回那条已排队请求，或停止它已启动的那一轮。"
     },
     "params_en": {
-      "target": "Who to message: a teammate profile name from your roster ('researcher', 'hermes' for the default agent), or '<peer>' / '<peer>/<agent>' for a registered peer gateway."
+      "target": "Who to message: a teammate profile name from your roster ('researcher', 'hermes' for the default agent), or '<peer>' / '<peer>/<agent>' for a registered peer gateway.",
+      "constraints": "Limits their answer must respect (scope, length, format).",
+      "expecting": "What you need back from them; shown to them as the reply they owe you.",
+      "expects_reply": "false: notify only — no reply comes back and nothing wakes you.",
+      "cancel": "A delivery_id from your own ack: withdraw that queued request or stop the turn it started."
     }
   },
   "browser_cdp": {
