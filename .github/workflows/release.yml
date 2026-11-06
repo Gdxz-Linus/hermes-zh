@@ -1,0 +1,80 @@
+name: 自动发布
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - VERSION
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 读取版本
+        id: v
+        run: |
+          TAG=$(grep '^tag=' VERSION | cut -d= -f2 | tr -d '[:space:]')
+          HERMES=$(grep '^hermes=' VERSION | cut -d= -f2 | tr -d '[:space:]')
+          if [ -z "$TAG" ] || [ -z "$HERMES" ]; then
+            echo "VERSION 文件缺少 tag 或 hermes，终止"
+            exit 1
+          fi
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "hermes=$HERMES" >> "$GITHUB_OUTPUT"
+
+      - name: 判断 tag 是否已存在
+        id: check
+        run: |
+          if git ls-remote --tags origin "refs/tags/${{ steps.v.outputs.tag }}" | grep -q .; then
+            echo "已存在 ${{ steps.v.outputs.tag }}，跳过发布"
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: 统计汉化内容
+        id: stats
+        run: |
+          PROMPTS=$(python3 -c "import json;d=json.load(open('核心/prompts-zh.json',encoding='utf-8'));print(sum(len(v) for v in d.values()))")
+          CORE=$(python3 -c "import json;print(len(json.load(open('工具/tools-zh.json',encoding='utf-8'))))")
+          PLUGIN=$(python3 -c "import json;print(len(json.load(open('插件/tools-zh.json',encoding='utf-8'))))")
+          KEYS=$(python3 -c "import glob,re;print(sum(1 for f in glob.glob('语言包/*.yaml') for l in open(f,encoding='utf-8') if re.match(r'^\\s+[A-Za-z_][\\w.]*:\\s+\\S', l)))")
+          SKILLS=$(find 技能库 -name SKILL.md | wc -l)
+          echo "prompts=$PROMPTS" >> "$GITHUB_OUTPUT"
+          echo "core=$CORE" >> "$GITHUB_OUTPUT"
+          echo "plugin=$PLUGIN" >> "$GITHUB_OUTPUT"
+          echo "keys=$KEYS" >> "$GITHUB_OUTPUT"
+          echo "skills=$SKILLS" >> "$GITHUB_OUTPUT"
+          echo "提示词 $PROMPTS 段 / 工具 $CORE+$PLUGIN 个 / 语言包 $KEYS 键 / 技能 $SKILLS 个"
+
+      - name: 创建 Release
+        if: steps.check.outputs.exists == 'false'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.v.outputs.tag }}
+          name: ${{ steps.v.outputs.tag }} — 适配 Hermes ${{ steps.v.outputs.hermes }}
+          body: |
+            适配 Hermes Agent **${{ steps.v.outputs.hermes }}**。
+
+            ## 汉化范围
+
+            | 层面 | 数量 |
+            | :--- | ---: |
+            | 核心提示词 | ${{ steps.stats.outputs.prompts }} 段 |
+            | 核心工具 | ${{ steps.stats.outputs.core }} 个 |
+            | 插件工具 | ${{ steps.stats.outputs.plugin }} 个 |
+            | 语言包差异键 | ${{ steps.stats.outputs.keys }} 个 |
+            | 技能文档 | ${{ steps.stats.outputs.skills }} 个 |
+
+            ## 安装
+
+            见仓库首页 README 的「怎么装」一节。
+
+            映射表未覆盖的内容保持英文，不影响任何功能。
+          draft: false
+          prerelease: false

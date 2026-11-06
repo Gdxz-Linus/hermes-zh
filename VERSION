@@ -1,0 +1,4 @@
+# 汉化包自身版本与适配的 Hermes 版本
+# 改这里并推送到 main，GitHub Actions 会自动创建对应的 tag 与 Release
+tag=v1.0.0
+hermes=0.23.0
