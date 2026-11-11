@@ -31,7 +31,8 @@ HERE = Path(__file__).resolve().parent
 
 CORE_PROMPTS = HERE / "核心" / "prompts-zh.json"
 CORE_TOOLS = HERE / "工具" / "tools-zh.json"
-PLUGIN_TOOLS = HERE / "插件" / "tools-zh.json"
+PLUGIN_TOOLS = HERE / "插件" / "plugin-tools-zh.json"
+CUSTOM_TOOLS = HERE / "插件" / "custom-tools-zh.json"
 PLUGIN_BODY = HERE / "插件" / "zh-localization-overlay"
 LOCALES_DIR = HERE / "语言包"
 SKILLS_DIR = HERE / "技能库"
@@ -154,17 +155,21 @@ def main() -> int:
     plugin_tools = load_json(PLUGIN_TOOLS)
     prompts = load_json(CORE_PROMPTS)
 
-    if not core_tools and not plugin_tools:
+    custom_tools = load_json(CUSTOM_TOOLS)
+
+    if not core_tools and not plugin_tools and not custom_tools:
         print("  ! 映射表为空，请确认目录结构完整")
         return 1
 
     merged = dict(core_tools)
     merged.update(plugin_tools)
+    merged.update(custom_tools)
     prompt_count = sum(len(v) for v in prompts.values() if isinstance(v, dict))
 
-    print(f"  核心工具 {len(core_tools)} 个")
-    print(f"  插件工具 {len(plugin_tools)} 个")
-    print(f"  合计     {len(merged)} 个")
+    print(f"  自带工具   {len(core_tools)} 个")
+    print(f"  外部插件   {len(plugin_tools)} 个")
+    print(f"  自定义插件 {len(custom_tools)} 个")
+    print(f"  合计       {len(merged)} 个")
     print(f"  提示词   {prompt_count} 段")
 
     if check:

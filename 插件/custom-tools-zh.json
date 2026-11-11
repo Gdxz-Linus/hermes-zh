@@ -1,0 +1,82 @@
+{
+  "codex_delegate": {
+    "en": "调用本地 Codex 命令行在指定的 Git 代码仓库中执行编码、重构与缺陷修复任务。\n\n支持沙箱读写控制、在独立的 Git 临时工作树中隔离运行（确保主代码目录不受影响），以及跨轮次接续此前未完成的会话。",
+    "description": "调用本地 Codex 命令行在指定的 Git 代码仓库中执行编码、重构与缺陷修复任务。\n\n支持沙箱读写控制、在独立的 Git 临时工作树中隔离运行（确保主代码目录不受影响），以及跨轮次接续此前未完成的会话。",
+    "params_en": {
+      "task": "要委托给 Codex 的具体任务描述、需求及验收指标",
+      "cwd": "目标代码仓库的本地绝对路径（例如 D:/smartdns-edge）",
+      "resume": "会话接续指令：传入 'last' 恢复最近一次会话、传入具体会话编号、或留空开启全新会话",
+      "worktree": "是否在独立的 Git 临时工作树分支中运行，避免影响主工作目录（默认 false）",
+      "profile": "可选的模型配置名称（例如 'gemini' 等特定档案），默认使用系统主配置",
+      "sandbox": "沙箱安全级别（'workspace-write' 默认仅允许修改工作区、'read-only' 只读模式、'danger-full-access' 允许完整访问）",
+      "timeout": "最大执行超时时间（秒），默认 600 秒",
+      "memory_query": "可选：委托前先查询长期记忆库的关键词（如项目名、功能名、约定名称）。查询到的相关记忆会自动附在任务说明前面，让 Codex 遵循用户既有约定而不必自行检索。留空则不注入。"
+    },
+    "params": {
+      "task": "要委托给 Codex 的具体任务描述、需求及验收指标",
+      "cwd": "目标代码仓库的本地绝对路径（例如 D:/smartdns-edge）",
+      "resume": "会话接续指令：传入 'last' 恢复最近一次会话、传入具体会话编号、或留空开启全新会话",
+      "worktree": "是否在独立的 Git 临时工作树分支中运行，避免影响主工作目录（默认 false）",
+      "profile": "可选的模型配置名称（例如 'gemini' 等特定档案），默认使用系统主配置",
+      "sandbox": "沙箱安全级别（'workspace-write' 默认仅允许修改工作区、'read-only' 只读模式、'danger-full-access' 允许完整访问）",
+      "timeout": "最大执行超时时间（秒），默认 600 秒",
+      "memory_query": "可选：委托前先查询长期记忆库的关键词（如项目名、功能名、约定名称）。查询到的相关记忆会自动附在任务说明前面，让 Codex 遵循用户既有约定而不必自行检索。留空则不注入。"
+    }
+  },
+  "codex_review": {
+    "en": "调用本地 Codex 作为独立的代码审查员，从严审视指定代码仓库中尚未提交的代码改动（Git 差异）。\n\n重点排查逻辑死锁、并发竞态、内存隐患以及异常处理疏漏。",
+    "description": "调用本地 Codex 作为独立的代码审查员，从严审视指定代码仓库中尚未提交的代码改动（Git 差异）。\n\n重点排查逻辑死锁、并发竞态、内存隐患以及异常处理疏漏。",
+    "params_en": {
+      "cwd": "目标代码仓库的本地绝对路径（例如 D:/smartdns-edge）",
+      "focus": "可选的重点审查方向（例如：并发安全、异常处理、内存泄漏等）",
+      "profile": "使用的模型档案，可选，默认主配置",
+      "timeout": "审查超时时间（秒），默认 300 秒"
+    },
+    "params": {
+      "cwd": "目标代码仓库的本地绝对路径（例如 D:/smartdns-edge）",
+      "focus": "可选的重点审查方向（例如：并发安全、异常处理、内存泄漏等）",
+      "profile": "使用的模型档案，可选，默认主配置",
+      "timeout": "审查超时时间（秒），默认 300 秒"
+    }
+  },
+  "opencode_delegate": {
+    "en": "调用本地 OpenCode CLI 在指定本地 Git 仓库中执行代码开发、重构、审查或修复任务。默认驱动官方免费的 DeepSeek-V4.1-Flash 模型在独立上下文中运行，并结构化返回执行结果。",
+    "description": "调用本地 OpenCode CLI 在指定本地 Git 仓库中执行代码开发、重构、审查或修复任务。默认驱动官方免费的 DeepSeek-V4.1-Flash 模型在独立上下文中运行，并结构化返回执行结果。",
+    "params_en": {
+      "task": "要委托给 OpenCode 的具体任务描述、需求及验收指标",
+      "cwd": "目标代码仓库的本地绝对路径（例如 D:/smartdns-edge）",
+      "model": "调用的模型标识，默认 'opencode/deepseek-v4.1-flash-free'",
+      "resume": "是否延续既有会话：'last' 延续最近一次会话，或传入具体的 session_id",
+      "thinking": "是否展示模型深度思考过程，默认 true",
+      "timeout": "最大执行超时时间（秒），默认 600 秒"
+    },
+    "params": {
+      "task": "要委托给 OpenCode 的具体任务描述、需求及验收指标",
+      "cwd": "目标代码仓库的本地绝对路径（例如 D:/smartdns-edge）",
+      "model": "调用的模型标识，默认 'opencode/deepseek-v4.1-flash-free'",
+      "resume": "是否延续既有会话：'last' 延续最近一次会话，或传入具体的 session_id",
+      "thinking": "是否展示模型深度思考过程，默认 true",
+      "timeout": "最大执行超时时间（秒），默认 600 秒"
+    }
+  },
+  "pdf_to_office": {
+    "en": "将 PDF 文件转换为原生可编辑的 Word、Excel 或 PPT 格式文件。\n\n包含两个步骤：\n1. 页面图像渲染（action='render_pages'）：将 PDF 页面逐页渲染为高清图片，以便通过视觉工具查看版式结构；\n2. 文档构建输出（action='build_docx'/'build_xlsx'/'build_pptx'）：依据识别出的文字、表格与样式数据，直接生成对应的 Office 格式文件。",
+    "description": "将 PDF 文件转换为原生可编辑的 Word、Excel 或 PPT 格式文件。\n\n包含两个步骤：\n1. 页面图像渲染（action='render_pages'）：将 PDF 页面逐页渲染为高清图片，以便通过视觉工具查看版式结构；\n2. 文档构建输出（action='build_docx'/'build_xlsx'/'build_pptx'）：依据识别出的文字、表格与样式数据，直接生成对应的 Office 格式文件。",
+    "params_en": {
+      "action": "操作指令：render_pages 渲染高清图片、build_docx 生成Word文档、build_xlsx 生成Excel工作簿、build_pptx 生成PPT演示文稿",
+      "pdf_path": "源 PDF 文件的本地绝对路径（render_pages 时必填）",
+      "pages": "页码范围，例如 '1', '1-5', 'all'（默认 'all'）",
+      "dpi": "渲染分辨率 DPI，默认 150",
+      "spec": "包含文本、表格结构与版式排版的结构化数据对象（build_* 时必填）",
+      "output_path": "生成的目标 Office 文件的本地绝对保存路径（build_* 时必填）"
+    },
+    "params": {
+      "action": "操作指令：render_pages 渲染高清图片、build_docx 生成Word文档、build_xlsx 生成Excel工作簿、build_pptx 生成PPT演示文稿",
+      "pdf_path": "源 PDF 文件的本地绝对路径（render_pages 时必填）",
+      "pages": "页码范围，例如 '1', '1-5', 'all'（默认 'all'）",
+      "dpi": "渲染分辨率 DPI，默认 150",
+      "spec": "包含文本、表格结构与版式排版的结构化数据对象（build_* 时必填）",
+      "output_path": "生成的目标 Office 文件的本地绝对保存路径（build_* 时必填）"
+    }
+  }
+}

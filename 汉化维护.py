@@ -52,8 +52,11 @@ def scan_installed_tools(repo: Path) -> dict:
     return tools
 
 
-def scan_installed_plugin_tools(plugins_root: Path) -> dict:
-    """扫描当前安装的外部安装插件，提取英文工具描述。
+def scan_installed_plugin_tools(plugins_root: Path, *, require_git: bool = True) -> dict:
+    """扫描插件目录，提取工具描述。
+
+    require_git=True  只扫外部安装的插件（带 .git），描述通常是英文；
+    require_git=False 只扫自定义插件（无 .git），描述通常是中文。
 
     跳过测试目录：插件测试里常有 {"name": "Create spec"} 这类示例字典。
     """
@@ -61,7 +64,12 @@ def scan_installed_plugin_tools(plugins_root: Path) -> dict:
     if not plugins_root.exists():
         return tools
     for plugin_dir in sorted(p for p in plugins_root.iterdir() if p.is_dir()):
-        if not (plugin_dir / ".git").exists():
+        has_git = (plugin_dir / ".git").exists()
+        if require_git and not has_git:
+            continue
+        if not require_git and has_git:
+            continue
+        if plugin_dir.name.startswith('.') or plugin_dir.name.endswith('.disabled'):
             continue
         for py in sorted(plugin_dir.rglob("*.py")):
             parts = py.parts
@@ -195,41 +203,48 @@ def main() -> int:
 
     core_tools = lib.load_json(lib.CORE_TOOLS)
     plugin_tools = lib.load_json(lib.PLUGIN_TOOLS)
+    custom_tools = lib.load_json(lib.CUSTOM_TOOLS)
     prompts_map = lib.load_json(lib.CORE_PROMPTS)
 
-    if not core_tools and not plugin_tools and not prompts_map:
+    if not core_tools and not plugin_tools and not custom_tools and not prompts_map:
         print("映射表不存在。")
         return 1
 
     print(
         f"映射表基线：核心工具 {len(core_tools)} 个，"
-        f"插件工具 {len(plugin_tools)} 个，"
+        f"外部插件工具 {len(plugin_tools)} 个，"
+        f"自定义插件工具 {len(custom_tools)} 个，"
         f"提示词 {lib.prompt_count(prompts_map)} 段"
     )
     print()
 
     workdir = lib.ROOT / "_probe"
     try:
-        return _run_compare(repo, core_tools, plugin_tools, prompts_map, workdir, args)
+        return _run_compare(
+            repo, core_tools, plugin_tools, custom_tools, prompts_map, workdir, args
+        )
     finally:
         # 临时目录用完即删，不留垃圾
         shutil.rmtree(workdir, ignore_errors=True)
 
 
-def _run_compare(repo, core_tools, plugin_tools, prompts_map, workdir, args) -> int:
+def _run_compare(repo, core_tools, plugin_tools, custom_tools, prompts_map, workdir, args) -> int:
     """对比差异并可选应用。"""
     cur_core = scan_installed_tools(repo)
     # 插件目录与安装目录同级：HERMES_HOME/plugins；--repo 指向别处时跟着走
     cur_plug = scan_installed_plugin_tools(repo.parent / "plugins")
+    cur_custom = scan_installed_plugin_tools(repo.parent / "plugins", require_git=False)
     cur_prompts = scan_installed_prompts(repo, workdir)
 
     print("对比当前安装版本与映射表：")
     t_core = diff_tools(cur_core, core_tools)
     t_plug = diff_tools(cur_plug, plugin_tools)
+    t_custom = diff_tools(cur_custom, custom_tools)
     p_diff = diff_prompts(cur_prompts, prompts_map)
     total = (
         report("核心工具", t_core)
-        + report("插件工具", t_plug)
+        + report("外部插件工具", t_plug)
+        + report("自定义插件工具", t_custom)
         + report("提示词", p_diff, skip_anchors=True)
     )
     print()
@@ -245,6 +260,9 @@ def _run_compare(repo, core_tools, plugin_tools, prompts_map, workdir, args) -> 
             removed += 1
         for name in t_plug["removed"]:
             plugin_tools.pop(name, None)
+            removed += 1
+        for name in t_custom["removed"]:
+            custom_tools.pop(name, None)
             removed += 1
         for key in p_diff["removed"]:
             module, _, name = key.partition(".")
@@ -271,6 +289,19 @@ def _run_compare(repo, core_tools, plugin_tools, prompts_map, workdir, args) -> 
                 "description": "",
                 "params_en": src.get("params", {}),
                 "params": {},
+            }
+            added += 1
+        for name in t_custom["added"]:
+            # 自定义插件的描述本身就是中文：原文与译文都写同一段，
+            # 替换时等于原文替换原文，不影响输出；
+            # 将来若被改成英文，对比会立刻报「内容变化」，提醒补译。
+            src = cur_custom[name]
+            text = src.get("description", "")
+            custom_tools[name] = {
+                "en": text,
+                "description": text,
+                "params_en": src.get("params", {}),
+                "params": dict(src.get("params", {})),
             }
             added += 1
         for key in p_diff["added"]:
@@ -302,6 +333,7 @@ def _run_compare(repo, core_tools, plugin_tools, prompts_map, workdir, args) -> 
 
         lib.save_json(lib.CORE_TOOLS, core_tools)
         lib.save_json(lib.PLUGIN_TOOLS, plugin_tools)
+        lib.save_json(lib.CUSTOM_TOOLS, custom_tools)
         lib.save_json(lib.CORE_PROMPTS, prompts_map)
         print(f"已清理 {removed} 项删减条目，补齐 {added} 项新增条目。")
         print("新增条目的中文侧为空，需补译后运行 部署汉化.py 部署。")

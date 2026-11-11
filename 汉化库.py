@@ -7,8 +7,9 @@
 --------
     本仓库根目录/
       核心/prompts-zh.json      核心提示词映射
-      工具/tools-zh.json        核心工具映射
-      插件/tools-zh.json        插件工具映射
+      工具/tools-zh.json        自带工具映射
+      插件/plugin-tools-zh.json 外部安装插件工具映射
+      插件/custom-tools-zh.json 自定义插件工具映射
       语言包/zh*.yaml           语言包差异键
       技能库/                   汉化技能
       插件/zh-localization-overlay/   插件本体
@@ -34,7 +35,8 @@ SKILLS_DIR = ROOT / "技能库"
 
 CORE_PROMPTS = CORE_DIR / "prompts-zh.json"
 CORE_TOOLS = TOOLS_DIR / "tools-zh.json"
-PLUGIN_TOOLS = PLUGINS_DIR / "tools-zh.json"
+PLUGIN_TOOLS = PLUGINS_DIR / "plugin-tools-zh.json"
+CUSTOM_TOOLS = PLUGINS_DIR / "custom-tools-zh.json"
 
 PLUGIN_BODY = PLUGINS_DIR / "zh-localization-overlay"
 
@@ -157,9 +159,10 @@ def save_json(path: Path, data: dict) -> None:
 
 
 def merged_tools() -> dict:
-    """把核心工具与插件工具合并成运行用映射表。"""
+    """把三张表合并成运行用映射表：自带工具 + 外部插件工具 + 自定义插件工具。"""
     merged = dict(load_json(CORE_TOOLS))
     merged.update(load_json(PLUGIN_TOOLS))
+    merged.update(load_json(CUSTOM_TOOLS))
     return merged
 
 
