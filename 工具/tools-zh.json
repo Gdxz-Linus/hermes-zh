@@ -37,12 +37,14 @@
     "params": {
       "handle": "由 list 返回的安全凭据句柄（fill 与 enter_code 时必填）。",
       "backend": "需要解锁的外部密码管理器服务商（onepassword 或 bitwarden，仅用于 unlock 指令）。",
-      "label": "save_login 时可选指定的网站简短名称（默认使用当前域名）。"
+      "label": "save_login 时可选指定的网站简短名称（默认使用当前域名）。",
+      "target": "fill、save_login、enter_code 使用：'preview' 指对话旁边的桌面端内置浏览器页面，'browser' 指受管的自动化浏览器。"
     },
     "params_en": {
       "handle": "fill / enter_code: a handle from list.",
       "backend": "unlock only.",
-      "label": "save_login only: short site name (default: the host)."
+      "label": "save_login only: short site name (default: the host).",
+      "target": "fill / save_login / enter_code: 'preview' = the Desktop in-app browser page beside the chat, 'browser' = the managed automation browser."
     }
   },
   "clarify": {
@@ -522,57 +524,6 @@
     "params_en": {
       "urls": "List of URLs to extract content from (max 5 URLs per call)",
       "char_limit": "Optional per-page character budget sent back (default 15000). Pages larger than this are head+tail truncated with the full text stored to disk. Raise it when you need more of a long page inline."
-    }
-  },
-  "yb_query_group_info": {
-    "en": "Query a group's name, owner and member count (a group is '派/Pai' in the app).",
-    "description": "查询群组（应用中称为「派」）的名称、群主与成员数。",
-    "params_en": {
-      "group_code": "The unique group identifier (group_code)."
-    }
-  },
-  "yb_send_dm": {
-    "en": "Send a private message (DM / 私信) to a group member by name, with optional media. It looks the user up in the group member list (or pass user_id if known). Use it when someone asks to privately message a user. Supports text, images, and file attachments.",
-    "description": "按名称向群成员发送私信（DM / 私信），可附带媒体文件。工具会在群成员列表中查找该用户（已知 user_id 时也可直接传入）。有人要求私信某用户时使用。支持文本、图片与文件附件。",
-    "params_en": {
-      "group_code": "The group where the target user belongs. Extract from chat_id: 'group:328306697' → '328306697'. Required when user_id is not provided.",
-      "name": "Target user's display name (partial match, case-insensitive). Required when user_id is not provided.",
-      "message": "The message text to send as a DM. Can be empty if only sending media.",
-      "user_id": "Target user's account ID. If provided, skips the member lookup. Usually obtained from a previous yb_query_group_members call.",
-      "media_files": "Optional list of media files to send along with the DM. Images (.jpg/.png/.gif/.webp/.bmp) are sent as image messages; other files are sent as document attachments."
-    }
-  },
-  "yb_query_group_members": {
-    "en": "Query members of a group (called '派/Pai' in the app). Use this tool when you need to @mention someone, find a user by name, list bots (including Yuanbao AI), or list all members. IMPORTANT: You MUST call this tool before @mentioning any user, because you need the exact nickname to construct the @mention format.",
-    "description": "Query members of a group (called '派/Pai' in the app). Use this tool when you need to @mention someone, find a user by name, list bots (including Yuanbao AI), or list all members. IMPORTANT: You MUST call this tool before @mentioning any user, because you need the exact nickname to construct the @mention format.",
-    "params_en": {
-      "group_code": "The unique group identifier (group_code).",
-      "action": "find — search a user by name (use when you need to @mention or look up someone); list_bots — list bots and Yuanbao AI assistants; list_all — list all members.",
-      "name": "User name to search (partial match, case-insensitive). Required for 'find'. Use the name the user mentioned in the conversation.",
-      "mention": "Set to true when you need to @mention/at someone in your reply. The response will include the exact @mention format to use."
-    }
-  },
-  "yb_search_sticker": {
-    "en": "Search the built-in Yuanbao sticker (TIM face / 表情包) catalogue by keyword. Returns the top matching candidates with sticker_id, name, and description. Use this BEFORE yb_send_sticker to discover the right sticker_id. Sticker = 贴纸 = TIM face — NOT a message reaction. Prefer sending a sticker over bare Unicode emoji when reacting/expressing emotion.",
-    "description": "Search the built-in Yuanbao sticker (TIM face / 表情包) catalogue by keyword. Returns the top matching candidates with sticker_id, name, and description. Use this BEFORE yb_send_sticker to discover the right sticker_id. Sticker = 贴纸 = TIM face — NOT a message reaction. Prefer sending a sticker over bare Unicode emoji when reacting/expressing emotion.",
-    "params": {
-      "query": "Search keyword (Chinese or English, e.g. '666', '比心', 'cool', '吃瓜'). Empty string returns the first N stickers."
-    },
-    "params_en": {
-      "query": "Search keyword (Chinese or English, e.g. '666', '比心', 'cool', '吃瓜'). Empty string returns the first N stickers.",
-      "limit": "Max number of candidates to return (default 10, max 50)."
-    }
-  },
-  "yb_send_sticker": {
-    "en": "Send a built-in sticker (TIMFaceElem / 贴纸表情) to the current Yuanbao chat. Call yb_search_sticker first if you don't know the sticker_id/name. Sticker = 贴纸 = TIM face — NOT a message reaction. CRITICAL: Whenever the user asks you to send a sticker / 贴纸 / 表情包, you MUST use this tool. DO NOT draw a PNG via execute_code / Pillow / matplotlib and then call send_image_file — that produces a fake 'sticker' image instead of a real TIM face and is the WRONG path. If no suitable sticker_id is known, call yb_search_sticker first. When the recent thread shows users sending stickers, prefer matching that tone by replying with a sticker instead of (or in addition to) text.",
-    "description": "Send a built-in sticker (TIMFaceElem / 贴纸表情) to the current Yuanbao chat. Call yb_search_sticker first if you don't know the sticker_id/name. Sticker = 贴纸 = TIM face — NOT a message reaction. CRITICAL: Whenever the user asks you to send a sticker / 贴纸 / 表情包, you MUST use this tool. DO NOT draw a PNG via execute_code / Pillow / matplotlib and then call send_image_file — that produces a fake 'sticker' image instead of a real TIM face and is the WRONG path. If no suitable sticker_id is known, call yb_search_sticker first. When the recent thread shows users sending stickers, prefer matching that tone by replying with a sticker instead of (or in addition to) text.",
-    "params": {
-      "sticker": "Sticker name (e.g. '六六六', '比心', 'ok') or numeric sticker_id (e.g. '278'). Empty string sends a random built-in sticker."
-    },
-    "params_en": {
-      "sticker": "Sticker name (e.g. '六六六', '比心', 'ok') or numeric sticker_id (e.g. '278'). Empty string sends a random built-in sticker.",
-      "chat_id": "Target chat. Defaults to the current session. Format: 'direct:{account_id}', 'group:{group_code}', or bare account_id.",
-      "reply_to": "Optional ref_msg_id to quote-reply (group chat only)."
     }
   },
   "message_agent": {
