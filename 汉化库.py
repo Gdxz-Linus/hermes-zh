@@ -129,6 +129,10 @@ PLUGIN_TOOL_NAMES = frozenset({
 
 MIN_LEN = 40
 
+_SCHEMA_FUNCS = frozenset({"tool_schema", "_tool_schema", "make_tool", "_make_tool", "schema"})
+
+
+
 
 # ── 基础工具 ──────────────────────────────────────────────────────
 def has_cn(text: str) -> bool:
@@ -231,7 +235,41 @@ def extract_tool_schemas(source: str) -> dict:
                                 out.setdefault(name, {}).setdefault("params", {})[
                                     prop.value
                                 ] = resolved
+
+    # ── 形态二：函数调用式 schema ──────────────────────────────────
+    # 有些插件用 _tool_schema("name", "desc", {参数}, [必填]) 定义工具，
+    # 参数值可能是 _str("desc") 这样的辅助函数调用，也可能是普通字典。
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Call) or len(node.args) < 2:
+            continue
+        func = node.func
+        fname = getattr(func, "id", None) or getattr(func, "attr", None)
+        if fname not in _SCHEMA_FUNCS:
+            continue
+        name = resolve(node.args[0])
+        if not isinstance(name, str) or not name:
+            continue
+        desc = resolve(node.args[1])
+        if desc:
+            out.setdefault(name, {})["description"] = desc
+        if len(node.args) < 3 or not isinstance(node.args[2], ast.Dict):
+            continue
+        for pk, pv in zip(node.args[2].keys, node.args[2].values):
+            if not isinstance(pk, ast.Constant) or not isinstance(pk.value, str):
+                continue
+            pdesc = None
+            if isinstance(pv, ast.Call) and pv.args:
+                # _str("说明") / _str("说明", enum=[...])
+                pdesc = resolve(pv.args[0])
+            elif isinstance(pv, ast.Dict):
+                for kk, vv in zip(pv.keys, pv.values):
+                    if isinstance(kk, ast.Constant) and kk.value == "description":
+                        pdesc = resolve(vv)
+                        break
+            if pdesc:
+                out.setdefault(name, {}).setdefault("params", {})[pk.value] = pdesc
     return out
+
 
 
 # ── 提示词常量提取 ────────────────────────────────────────────────

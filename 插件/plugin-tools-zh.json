@@ -317,5 +317,87 @@
       "path": "Absolute path or file name of a plan written in this plan mode; default: the newest one",
       "summary": "Optional one-line title for the approval prompt"
     }
+  },
+  "viking_search": {
+    "en": "Semantic search over the OpenViking knowledge base. Returns ranked results with viking:// URIs for deeper reading. Use mode='deep' for complex queries that need reasoning across multiple sources, 'fast' for simple lookups.",
+    "description": "对 OpenViking 知识库做语义检索。返回按相关度排序的结果，附 viking:// 资源路径，便于深入阅读。复杂查询需要跨多个资料源推理时用 mode='deep'，简单查找用 'fast'。",
+    "params_en": {
+      "query": "Search query.",
+      "mode": "Search depth (default: auto).",
+      "scope": "Viking URI prefix to scope search (e.g. 'viking://resources/docs/').",
+      "limit": "Max results (default: 10)."
+    },
+    "params": {
+      "query": "检索关键词或提问。",
+      "mode": "检索深度（默认 auto）。",
+      "scope": "限定检索范围的 viking:// 路径前缀（例如 'viking://resources/docs/'）。",
+      "limit": "最多返回条数（默认 10）。"
+    }
+  },
+  "viking_read": {
+    "en": "Read one or a few specific viking:// URIs returned by viking_search or viking_browse. Three detail levels:\n  abstract — ~100 token summary (L0)\n  overview — ~2k token key points (L1)\n  full — complete content (L2)\nStart with abstract/overview, only use full when you need details. For multiple strong candidates, pass uris with up to three URIs.",
+    "description": "精读 viking_search 或 viking_browse 返回的一个或几个 viking:// 资源路径。三个细节层级：\n  abstract —— 约 100 词的摘要（L0）\n  overview —— 约 2000 词的重点归纳（L1）\n  full —— 完整正文（L2）\n先看 abstract 或 overview，确实需要细节时再用 full。有多个强相关候选时，用 uris 一次传最多三个路径。",
+    "params_en": {
+      "uri": "Single viking:// URI to read.",
+      "uris": "Optional batch of up to three viking:// URIs to read.",
+      "level": "Detail level (default: overview)."
+    },
+    "params": {
+      "uri": "要读取的单个 viking:// 路径。",
+      "uris": "可选，一次最多读取三个 viking:// 路径。",
+      "level": "细节层级（默认 overview）。"
+    }
+  },
+  "viking_browse": {
+    "en": "Browse the OpenViking knowledge store like a filesystem.\n  list — show directory contents\n  tree — show hierarchy\n  stat — show metadata for a URI",
+    "description": "像浏览文件系统一样查看 OpenViking 知识库。\n  list —— 列出目录内容\n  tree —— 展示层级结构\n  stat —— 查看路径的元数据",
+    "params_en": {
+      "action": "Browse action.",
+      "path": "Viking URI path (default: viking://). Examples: 'viking://resources/', 'viking://~/memories/'."
+    },
+    "params": {
+      "action": "浏览动作。",
+      "path": "viking:// 路径（默认 viking://）。例如 'viking://resources/'、'viking://~/memories/'。"
+    }
+  },
+  "viking_remember": {
+    "en": "Submit important long-term information to OpenViking through session memory extraction. Success means the source was submitted, not that a distinct memory file was created. OpenViking can add, merge, or skip the final memory. Use this tool when OpenViking should decide how to retain the information. Do not use it when an exact memory file or URI is required. If the message is accepted but commit fails, it normally remains live and unextracted because server auto-commit is disabled by default; follow the returned recovery instructions.",
+    "description": "通过会话记忆提取，把重要的长期信息提交给 OpenViking。返回成功只表示来源信息已提交，不代表已创建独立的记忆文件；OpenViking 可能新增、合并或跳过最终记忆。需要由 OpenViking 自行判断如何保存时用本工具；需要精确指定记忆文件或路径时不要用它。消息已被接收但提交失败时，通常仍处于活跃未提取状态（服务端默认关闭自动提交），按返回的指引处理。",
+    "params_en": {
+      "content": "The information to remember."
+    },
+    "params": {
+      "content": "要记住的信息。"
+    }
+  },
+  "viking_forget": {
+    "en": "Delete one OpenViking memory file by exact viking:// URI. Use only when the user explicitly asks to forget or delete a specific memory and you have the exact memory file URI. Resources, skills, sessions, directories, generated summaries, and broad deletes are rejected.",
+    "description": "按完整的 viking:// 路径删除一个 OpenViking 记忆文件。仅在用户明确要求遗忘或删除某条特定记忆、且已拿到准确记忆文件路径时使用。资源、技能、会话、目录、自动生成的总结以及范围过宽的删除都会被拒绝。",
+    "params_en": {
+      "uri": "Exact viking:// memory file URI ending in .md."
+    },
+    "params": {
+      "uri": "以 .md 结尾的准确 viking:// 记忆文件路径。"
+    }
+  },
+  "viking_add_resource": {
+    "en": "Add a remote URL or local file/directory to the OpenViking knowledge base. Remote resources must be public http(s), git, or ssh URLs. Local files are uploaded first using OpenViking temp_upload. The system automatically parses, indexes, and generates summaries.",
+    "description": "把远程链接或本地文件、目录加入 OpenViking 知识库。远程资源必须是可公开访问的 http(s)、git 或 ssh 地址。本地文件先经 OpenViking 的 temp_upload 上传。系统会自动解析、建立索引并生成摘要。",
+    "params_en": {
+      "url": "Remote URL or local file/directory path to add.",
+      "reason": "Why this resource is relevant (improves search).",
+      "to": "Optional target viking:// URI for the resource.",
+      "parent": "Optional parent viking:// URI. Cannot be used with to.",
+      "instruction": "Optional processing instruction for semantic extraction.",
+      "wait": "Whether to wait for processing to complete."
+    },
+    "params": {
+      "url": "要加入的远程链接或本地文件、目录路径。",
+      "reason": "说明该资源为什么相关（有助于提升检索效果）。",
+      "to": "可选，指定资源在知识库中的目标 viking:// 路径。",
+      "parent": "可选，指定父级 viking:// 路径。不能与 to 同时使用。",
+      "instruction": "可选，语义提取的附加处理说明。",
+      "wait": "是否等到处理完成再返回。"
+    }
   }
 }
