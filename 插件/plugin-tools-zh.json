@@ -15,20 +15,26 @@
     }
   },
   "ha_list_entities": {
-    "en": "List Home Assistant entities. Optionally filter by domain (light, switch, climate, sensor, binary_sensor, cover, fan, etc.) or by area name (living room, kitchen, bedroom, etc.).",
-    "description": "列出 Home Assistant 中的实体。可按设备域（灯光 light、开关 switch、温控 climate、传感器 sensor、二元传感器 binary_sensor、窗帘 cover、风扇 fan 等）或按区域名称（客厅、厨房、卧室等）筛选。",
+    "en": "List Home Assistant entities. On a large install a bare call can return thousands of entities, so use the filters (domain, area, name, entity_ids) to keep the response small and targeted. Each entity includes its area and device when known (always after an area query).\nFor a request about a room (\"the kitchen lights\"), filter by `area`, not `name`: a device belongs to a room by its Home Assistant area, and its name often does not mention the room. Take everything the area filter returns as part of that room, and judge what an entity is by the domain prefix of its entity_id (every light.* is a light), not by its name.\nAn operator may configure a global cap (HASS_MAX_ENTITIES); when that or a 'max' parameter limits a result, the response is marked 'truncated' with a note on how to narrow the query or get more.",
+    "description": "列出 Home Assistant 实体。在大型安装上，不带筛选的调用可能返回数千个实体，因此请使用筛选条件（domain、area、name、entity_ids）让结果小而精准。每个实体在已知时会附带所属区域与设备（按区域查询后一定附带）。\n对于「厨房的灯」这类按房间提出的请求，请用 `area` 筛选而不是 `name`：设备归属房间取决于它在 Home Assistant 中的区域，而其名称通常不含房间。把 area 筛选返回的全部结果都视为该房间的一部分；判断某实体是什么，看它 entity_id 的域前缀（每个 light.* 都是灯），而不是看名称。\n运维方可能配置了全局上限（HASS_MAX_ENTITIES）；当该上限或 'max' 参数限制了结果时，响应会标注 'truncated'，并说明如何缩小查询范围或取得更多结果。",
     "params": {
-      "domain": "用于筛选的实体域（例如 'light'、'switch'、'climate'、'sensor'、'binary_sensor'、'cover'、'fan'、'media_player'）。省略则列出全部实体。",
-      "area": "用于筛选的区域或房间名称（例如 'living room'、'kitchen'）。匹配实体的友好名称。省略则列出全部。"
+      "domain": "按实体域筛选（例如 'light'、'switch'、'climate'、'sensor'、'binary_sensor'、'cover'、'fan'、'media_player'）。这是开销最小的筛选方式；与 area 或 name 组合可做精准查询。省略则列出全部实体。",
+      "area": "按区域名称筛选（例如 'living room'、'kitchen'）。凡是针对房间的请求都用这一项，不要用 name。筛选基于 Home Assistant 的区域注册表，因此实体名称不含房间名也能匹配；注册表不可用时退回匹配友好名称。省略则列出全部。",
+      "name": "按子串匹配实体的友好名称与 entity_id（例如 'thermostat'、'temperature'）。在不知道实体域时有用。不用于房间：请用 area，因为名称很少包含房间名。",
+      "entity_ids": "要精确获取的 entity_id 列表（例如 ['climate.office'、'sensor.office_temp']）。只返回这些实体，忽略 domain、area、name 筛选。",
+      "max": "本次调用最多返回的实体数量。本次调用会覆盖运维方配置的上限（HASS_MAX_ENTITIES）；查询已充分筛选且确实需要更大批量时，可设更高。"
     },
     "params_en": {
-      "domain": "Entity domain to filter by (e.g. 'light', 'switch', 'climate', 'sensor', 'binary_sensor', 'cover', 'fan', 'media_player'). Omit to list all entities.",
-      "area": "Area/room name to filter by (e.g. 'living room', 'kitchen'). Matches against entity friendly names. Omit to list all."
+      "domain": "Entity domain to filter by (e.g. 'light', 'switch', 'climate', 'sensor', 'binary_sensor', 'cover', 'fan', 'media_player'). The cheapest filter; combine with area or name for a targeted query. Omit to list all entities.",
+      "area": "Area/room name to filter by (e.g. 'living room', 'kitchen'). Use this, not name, for any request about a room. Resolved against the Home Assistant area registry, so an entity is matched even when its name does not mention the room; falls back to matching friendly names when the registry is unreachable. Omit to list all.",
+      "name": "Substring to match against entity friendly names and entity_ids (e.g. 'thermostat', 'temperature'). Useful when you don't know the domain. Not for rooms: use area, because names rarely mention the room.",
+      "entity_ids": "Exact list of entity_ids to fetch (e.g. ['climate.office', 'sensor.office_temp']). Returns just these entities, ignoring the domain/area/name filters.",
+      "max": "Maximum number of entities to return for this call. Overrides any operator-configured cap (HASS_MAX_ENTITIES) for this one call; set higher if you genuinely need a larger batch and the query is already well filtered."
     }
   },
   "ha_get_state": {
-    "en": "Get the detailed state of a single Home Assistant entity, including all attributes (brightness, color, temperature setpoint, sensor readings, etc.).",
-    "description": "获取单个 Home Assistant 实体的详细状态，包含全部属性（亮度、颜色、温度设定值、传感器读数等）。",
+    "en": "Get the detailed state of a single Home Assistant entity, including all attributes (brightness, color, temperature setpoint, sensor readings, etc.). Home Assistant answers timestamps in UTC; the response also carries them in the instance's local timezone (last_changed_local, last_updated_local, and last_triggered_local for automations) - present those to the user instead of converting the UTC values by hand.",
+    "description": "获取单个 Home Assistant 实体的详细状态，包含全部属性（亮度、颜色、温度设定值、传感器读数等）。Home Assistant 返回的时间戳是 UTC；响应同时给出实例本地时区的对应值（last_changed_local、last_updated_local，自动化另有 last_triggered_local）——请直接把这些展示给用户，不要手动换算 UTC 值。",
     "params": {
       "entity_id": "需要查询的实体标识（例如 'light.living_room'、'climate.thermostat'、'sensor.temperature'）。"
     },
@@ -47,19 +53,19 @@
     }
   },
   "ha_call_service": {
-    "en": "Call a Home Assistant service to control a device. Use ha_list_services to discover available services and their parameters for each domain.",
-    "description": "调用 Home Assistant 服务控制设备。可先使用 ha_list_services 查询各设备域支持的服务与参数。",
+    "en": "Call a Home Assistant service to control a device. Use ha_list_services to discover available services and their parameters for each domain. Never guess an entity_id: call ha_list_entities first (optionally with a domain filter) and use the exact ids it returns. The service domain MUST match the entity's own domain: a light.* entity needs light.turn_on, a switch.* entity needs switch.turn_on, an input_boolean.* toggle needs input_boolean.turn_on — calling the wrong domain affects nothing. The error field explains exactly what went wrong (missing entity, wrong domain, or a device that has not confirmed the change) — follow its suggestion. If the operator restricts entities, target explicit entity_ids: calls on restricted entities, or by area/device/label or with no target, are refused.",
+    "description": "调用 Home Assistant 服务以控制设备。用 ha_list_services 查询各域可用的服务及其参数。绝不要猜 entity_id：先调用 ha_list_entities（可选加域筛选），使用它返回的准确编号。服务域必须与实体自身的域一致：light.* 实体要用 light.turn_on，switch.* 实体要用 switch.turn_on，input_boolean.* 开关要用 input_boolean.turn_on——域用错不会产生任何效果。error 字段会说明具体哪里出错（实体不存在、域不对，或设备尚未确认变更）——按它的建议处理。若运维方限制了实体，请指定明确的 entity_ids：对受限实体的调用，或按区域、设备、标签指定以及不带目标的调用，都会被拒绝。",
     "params": {
       "domain": "服务所属域（例如 'light'、'switch'、'climate'、'cover'、'media_player'、'fan'、'scene'、'script'）。",
       "service": "服务名称（例如 'turn_on'、'turn_off'、'toggle'、'set_temperature'、'set_hvac_mode'、'open_cover'、'close_cover'、'set_volume_level'）。",
       "entity_id": "目标实体标识（例如 'light.living_room'）。部分服务（如 scene.turn_on）可能不需要此项。",
-      "data": "以 JSON 字符串形式传入的附加服务参数。示例：灯光用 {\"brightness\": 255, \"color_name\": \"blue\"}，温控用 {\"temperature\": 22, \"hvac_mode\": \"heat\"}，媒体播放器用 {\"volume_level\": 0.5}。"
+      "data": "附加的服务数据。优先使用普通对象：灯用 {\"brightness\": 255, \"color_name\": \"blue\"}，温控用 {\"temperature\": 22, \"hvac_mode\": \"heat\"}，播放器用 {\"volume_level\": 0.5}，media_player.play_media 用 {\"media_content_id\": \"radar weekly\", \"media_content_type\": \"playlist\"}。同一对象的 JSON 字符串也可以接受。"
     },
     "params_en": {
       "domain": "Service domain (e.g. 'light', 'switch', 'climate', 'cover', 'media_player', 'fan', 'scene', 'script').",
       "service": "Service name (e.g. 'turn_on', 'turn_off', 'toggle', 'set_temperature', 'set_hvac_mode', 'open_cover', 'close_cover', 'set_volume_level').",
       "entity_id": "Target entity ID (e.g. 'light.living_room'). Some services (like scene.turn_on) may not need this.",
-      "data": "Additional service data as a JSON string. Examples: {\"brightness\": 255, \"color_name\": \"blue\"} for lights, {\"temperature\": 22, \"hvac_mode\": \"heat\"} for climate, {\"volume_level\": 0.5} for media players."
+      "data": "Additional service data. Prefer a plain object: {\"brightness\": 255, \"color_name\": \"blue\"} for lights, {\"temperature\": 22, \"hvac_mode\": \"heat\"} for climate, {\"volume_level\": 0.5} for media players, {\"media_content_id\": \"radar weekly\", \"media_content_type\": \"playlist\"} for media_player.play_media. A JSON-encoded string of the same object is also accepted."
     }
   },
   "openspec_context": {
@@ -299,8 +305,8 @@
     }
   },
   "plan_mode": {
-    "en": "Enter plan mode with action='on'. When the plan file is written and shown to the user, call action='submit' ALONE (not batched with other tool calls) to ask for approval. Approval or denial is the user's act. action='off' ends only an agent-entered plan mode. While on, writes are allowed only under the session's plans directory; other mutating tools are blocked. action='status' reports state. submit defaults to the newest tracked plan; path selects a plan and summary gives the approval prompt a title.",
-    "description": "用 action='on' 进入计划模式。计划文件写好并展示给用户后，单独调用 action='submit'（不要与其他工具调用合并在同一批）以请求批准。批准或拒绝由用户决定。action='off' 只能结束由智能体自己进入的计划模式。计划模式开启期间，仅允许向本会话的计划目录写入；其他修改类工具一律阻断。action='status' 报告当前状态。submit 默认取最新的受跟踪计划；path 用于指定某个计划，summary 为审批提示提供标题。",
+    "en": "Enter plan mode with action='on'. When the plan file is written and shown to the user, call action='submit' ALONE (not batched with other tool calls) to ask for approval. Approval or denial is the user's act. action='off' ends only an agent-entered plan mode. While on, writes are allowed only under the session's plans directory; other mutating tools are blocked. action='status' reports state as text; action='inspect' returns it as fields (phase, plan, revision, edit policy, progress, files changed); action='list' lists the plans in the plans directory with their status. submit defaults to the newest tracked plan; path selects a plan and summary gives the approval prompt a title.",
+    "description": "用 action='on' 进入计划模式。计划文件写好并展示给用户后，单独调用 action='submit'（不要与其他工具调用放在同一批）请求批准。批准或拒绝由用户决定。action='off' 只结束智能体自己进入的计划模式。计划模式开启期间，写入只允许发生在本次会话的计划目录内；其他会修改内容的工具都会被拦截。action='status' 以文本报告状态；action='inspect' 以字段形式返回（阶段、计划、修订号、编辑策略、进度、变更文件）；action='list' 列出计划目录里的计划及其状态。submit 默认使用最新的受跟踪计划；path 用于选定某个计划，summary 给批准提示加标题。",
     "params": {
       "reason": "计划的用途说明。",
       "path": "本次计划模式下写入的计划文件的绝对路径或文件名；默认为最新的一个",

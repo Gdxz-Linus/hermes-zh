@@ -64,10 +64,14 @@ def scan_installed_plugin_tools(plugins_root: Path, *, require_git: bool = True)
     if not plugins_root.exists():
         return tools
     for plugin_dir in sorted(p for p in plugins_root.iterdir() if p.is_dir()):
-        has_git = (plugin_dir / ".git").exists()
-        if require_git and not has_git:
+        # 外部安装有两种来源：git 克隆，或从插件目录下载的快照（后者无 .git，
+        # 只有 .hermes-catalog.json 记录来源仓库与版本）
+        is_external = (plugin_dir / ".git").exists() or (
+            plugin_dir / ".hermes-catalog.json"
+        ).is_file()
+        if require_git and not is_external:
             continue
-        if not require_git and has_git:
+        if not require_git and is_external:
             continue
         if plugin_dir.name.startswith('.') or plugin_dir.name.endswith('.disabled'):
             continue
