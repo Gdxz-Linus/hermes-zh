@@ -1,7 +1,7 @@
 ---
 name: xlsx
 description: "Excel (.xlsx) 工作簿处理：构建强类型数据表、自动列宽、公式图表与结构化编辑。"
-version: 1.2.0
+version: 1.3.0
 author: Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
@@ -156,6 +156,12 @@ for row in ws.iter_rows(min_row=2, values_only=True):
 
 print(f"成功提取 {len(records)} 条记录")
 ```
+
+---
+
+**进阶能力的完整说明见 `references/excel-advanced.md`**：创建图表、数据验证下拉、原生表格、定义名称、超链接、单元格批注、工作表保护、公式重算，以及八条已知陷阱。
+
+结构调整（含公式的表格增删行列）的改写规则与边界，见 `references/restructuring.md`。
 
 ---
 

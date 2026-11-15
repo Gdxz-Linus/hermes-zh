@@ -1,7 +1,7 @@
 ---
 name: powerpoint
 description: "PowerPoint (.pptx) 演示文稿处理：16:9 现代宽屏排版、原生可编辑组件、图表数据更新与规范化制作。"
-version: 1.2.0
+version: 1.3.0
 author: Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
@@ -143,6 +143,8 @@ python scripts/pptx_edit.py presentation.pptx --replace-text "旧部门名" "新
 # 导出每页幻灯片为高清预览图像
 python scripts/pptx_render.py presentation.pptx --outdir ./slide_previews/
 ```
+
+**完整的参数清单、图表局部修改、按模板生成、十一条已知陷阱与交付核对，见 `references/powerpoint.md`。**
 
 ---
 

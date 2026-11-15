@@ -1,7 +1,7 @@
 ---
 name: docx
 description: "Word (.docx) 原生文档处理：规范化创建、结构化读取、段落样式重塑、表格编辑与模板填充。"
-version: 1.2.0
+version: 1.3.0
 author: Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
@@ -154,6 +154,36 @@ for table in doc.tables:
             for p in cell.paragraphs:
                 replace_text_in_paragraph(p, "旧公司名称", "新公司名称")
 ```
+
+---
+
+### 4. 基于模板填充变量
+
+文档里放 `{{变量名}}` 形式的占位标记，再把取值以 JSON 对象传给模板脚本：
+
+```bash
+"$PY" scripts/docx_template.py 模板.docx 输出.docx --values 取值.json
+```
+
+- 加 `--strict` 时，若还有占位标记未被填充，脚本直接失败，输出 JSON 会列出剩余标记
+- 不加 `--strict` 时，未填充的标记原样保留
+- 占位标记可出现在正文、表格与页眉页脚
+
+### 5. 修订与批注
+
+| 操作 | 命令 |
+| :--- | :--- |
+| 列出全部修订 | `docx_revisions.py list 文档.docx` |
+| 全部接受 | `docx_revisions.py accept-all 文档.docx` |
+| 全部拒绝 | `docx_revisions.py reject-all 文档.docx` |
+| 处理单条 | `docx_revisions.py accept --id N 文档.docx` |
+| 列出批注 | `docx_comments.py list 文档.docx` |
+| 在某段文字上添加批注 | `docx_comments.py add --target "某段话" --text "批注内容" 文档.docx` |
+| 删除批注 | `docx_comments.py delete --id N 文档.docx` |
+
+接受修订表示保留插入、丢弃删除；拒绝修订反过来。批注的增删不改变正文文字。
+
+XML 层细节（`w:ins`/`w:del` 的处理语义、批注三部件、脚本不支持的修订形态）见 `references/revisions-and-comments.md`。
 
 ---
 
